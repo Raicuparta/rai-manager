@@ -7,7 +7,7 @@
         Width="400"
         Height="300"
         x:Class="RaiManager.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/icon.ico"
         Title="Rai Manager"
         DragDrop.AllowDrop="True">
 
