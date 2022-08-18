@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -125,7 +126,7 @@ namespace RaiManager.ViewModels
             StatusText = $"Drag {GameExe} and drop it on this window to install {ModTitle}";
         }
 
-        private async void OnClickInstall()
+        public async void OnClickInstall()
         {
             var gameDirectory = Path.GetDirectoryName(GameExePath);
             var bepinexPath = Path.GetFullPath("./Mod/BepInEx");
@@ -137,12 +138,21 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
             CheckIfInstalled();
         }
         
-        private void OnClickUninstall()
+        public void OnClickUninstall()
         {
             var gameDirectory = Path.GetDirectoryName(GameExePath);
             File.Delete(Path.Join(gameDirectory, "doorstop_config.ini"));
             File.Delete(Path.Join(gameDirectory, "winhttp.dll"));
             CheckIfInstalled();
+        }
+
+        public void OnClickStart()
+        {
+            if (GameExePath == null)
+            {
+                return;
+            }
+            Process.Start(GameExePath);
         }
 
         private void CheckIfInstalled()
