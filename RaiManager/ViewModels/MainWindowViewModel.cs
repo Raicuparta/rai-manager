@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using Avalonia.Media.Imaging;
-using Avalonia.X11;
 using ReactiveUI;
 
 namespace RaiManager.ViewModels
@@ -188,8 +187,11 @@ namespace RaiManager.ViewModels
             await File.WriteAllTextAsync("./Mod/CopyToGame/doorstop_config.ini", $@"[UnityDoorstop]
 enabled=true
 targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
-            File.Copy("./Mod/CopyToGame/doorstop_config.ini", Path.Join(gameDirectory, "doorstop_config.ini"));
-            File.Copy("./Mod/CopyToGame/winhttp.dll", Path.Join(gameDirectory, "winhttp.dll"));
+            
+            CopyFilesRecursively(new DirectoryInfo("./Mod/CopyToGame"), new DirectoryInfo(gameDirectory));
+            
+            // File.Copy("./Mod/CopyToGame/doorstop_config.ini", Path.Join(gameDirectory, "doorstop_config.ini"));
+            // File.Copy("./Mod/CopyToGame/winhttp.dll", Path.Join(gameDirectory, "winhttp.dll"));
             CheckIfInstalled();
         }
         
@@ -210,6 +212,17 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
             Process.Start(GameExePath);
         }
 
+        public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target) {
+            foreach (var dir in source.GetDirectories())
+            {
+                CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
+            }
+            foreach (var file in source.GetFiles())
+            {
+                file.CopyTo(Path.Combine(target.FullName, file.Name));
+            }
+        }
+        
         private void CheckIfInstalled()
         {
             if (GameExePath == null)
