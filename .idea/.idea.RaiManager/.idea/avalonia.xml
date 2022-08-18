@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="RaiManager/App.axaml" value="RaiManager/RaiManager.csproj" />
+        <entry key="RaiManager/Views/MainWindow.axaml" value="RaiManager/RaiManager.csproj" />
+      </map>
+    </option>
+  </component>
+</project>
