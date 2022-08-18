@@ -16,8 +16,7 @@
     </Design.DataContext>
 
     <StackPanel Margin="10" Spacing="10">
-        <Image Source="{Binding Icon}"></Image>
-        <TextBlock Text="{Binding FileNamesText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Image Height="100" Width="100" Source="{Binding Icon}" />
         <TextBlock Text="{Binding FileNamesText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </StackPanel>
 
