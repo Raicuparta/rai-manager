@@ -182,17 +182,23 @@ namespace RaiManager.ViewModels
 
         public async void OnClickInstall()
         {
-            var gameDirectory = Path.GetDirectoryName(GameExePath);
-            var bepinexPath = Path.GetFullPath("./Mod/BepInEx");
-            await File.WriteAllTextAsync("./Mod/CopyToGame/doorstop_config.ini", $@"[UnityDoorstop]
+            try
+            {
+
+                var gameDirectory = Path.GetDirectoryName(GameExePath);
+                var bepinexPath = Path.GetFullPath("./Mod/BepInEx");
+                await File.WriteAllTextAsync("./Mod/CopyToGame/doorstop_config.ini", $@"[UnityDoorstop]
 enabled=true
 targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
-            
-            CopyFilesRecursively(new DirectoryInfo("./Mod/CopyToGame"), new DirectoryInfo(gameDirectory));
-            
-            // File.Copy("./Mod/CopyToGame/doorstop_config.ini", Path.Join(gameDirectory, "doorstop_config.ini"));
-            // File.Copy("./Mod/CopyToGame/winhttp.dll", Path.Join(gameDirectory, "winhttp.dll"));
-            CheckIfInstalled();
+
+                CopyFilesRecursively(new DirectoryInfo("./Mod/CopyToGame"), new DirectoryInfo(gameDirectory));
+
+                CheckIfInstalled();
+            }
+            catch (Exception exception)
+            {
+                StatusText = exception.Message;
+            }
         }
         
         public void OnClickUninstall()
@@ -219,7 +225,7 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
             }
             foreach (var file in source.GetFiles())
             {
-                file.CopyTo(Path.Combine(target.FullName, file.Name));
+                File.Copy(file.FullName, Path.Combine(target.FullName, file.Name), true);
             }
         }
         
