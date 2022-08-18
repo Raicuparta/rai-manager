@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using Avalonia.Media.Imaging;
-using Avalonia.X11;
 using ReactiveUI;
 
 namespace RaiManager.ViewModels
@@ -36,6 +36,7 @@ namespace RaiManager.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref gameExePath, value);
                 CheckIfInstalled();
+                WriteSettings();
             }
         }
 
@@ -88,8 +89,40 @@ namespace RaiManager.ViewModels
         {
             LoadManifest();
             LoadIcon();
+            LoadSettings();
+        }
+
+        private async void LoadSettings()
+        {
+            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var settingsDocument = await ReadXmlDocument(Path.Join(appDataPath, "RaiManager/settings.xml"));
+            GameExePath = GetXmlProperty(settingsDocument, "/settings/gameExePath");
         }
         
+        private async void WriteSettings()
+        {
+            if (GameExePath == null) return;
+            
+            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var raiManagerDataPath = Path.Join(appDataPath, "RaiManager");
+            var settingsPath = Path.Join(raiManagerDataPath, "settings.xml");
+            var settingsDocument = await ReadXmlDocument(settingsPath) ?? new XmlDocument();
+
+            var gameExeNode = settingsDocument.SelectSingleNode("/settings/gameExePath");
+
+            if (gameExeNode == null)
+            {
+                settingsDocument.LoadXml($"<settings><gameExePath>{GameExePath}</gameExePath></settings>");
+            }
+            else
+            {
+                gameExeNode.InnerText = GameExePath;
+            }
+
+            Directory.CreateDirectory(raiManagerDataPath);
+            settingsDocument.Save(settingsPath);
+        }
+
         public void DropFiles(List<string> files)
         {
             StatusText = string.Join(", ", files);
@@ -108,16 +141,33 @@ namespace RaiManager.ViewModels
             }
         }
 
-        private string GetManifestProperty(XmlDocument document, string propertyName)
+        private string GetManifestProperty(XmlDocument? document, string propertyName)
         {
-            return document.SelectSingleNode($"/manifest/{propertyName}")?.InnerText ?? $"[MISSING {propertyName}]";
+            return GetXmlProperty(document, $"/manifest/{propertyName}") ?? $"[MISSING {propertyName}]";
+        }
+        
+        private string? GetXmlProperty(XmlDocument? document, string path)
+        {
+            return document?.SelectSingleNode(path)?.InnerText;
+        }
+
+        private async Task<XmlDocument?> ReadXmlDocument(string path)
+        {
+            if (!File.Exists(path))
+            {
+                return null;
+            }
+            var text = await File.ReadAllTextAsync(path);
+            var document = new XmlDocument();
+            document.LoadXml(text);
+            return document;
         }
         
         private async void LoadManifest()
         {
-            var text = await File.ReadAllTextAsync(manifestPath);
-            var document = new XmlDocument();
-            document.LoadXml(text);
+            var document = await ReadXmlDocument(manifestPath);
+
+            if (document == null) throw new FileNotFoundException($"Failed to find manifest in {manifestPath}");
 
             ModTitle = GetManifestProperty(document, "modTitle");
             GameTitle = GetManifestProperty(document, "gameTitle");
