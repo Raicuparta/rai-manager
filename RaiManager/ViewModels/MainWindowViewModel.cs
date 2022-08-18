@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using Avalonia.Media.Imaging;
+using Avalonia.X11;
 using ReactiveUI;
 
 namespace RaiManager.ViewModels
@@ -34,7 +35,14 @@ namespace RaiManager.ViewModels
             get => gameExePath;
             set
             {
-                this.RaiseAndSetIfChanged(ref gameExePath, value);
+                if (value != null && !File.Exists(value))
+                {
+                    this.RaiseAndSetIfChanged(ref gameExePath, null);
+                }
+                else
+                {
+                    this.RaiseAndSetIfChanged(ref gameExePath, value);
+                }
                 CheckIfInstalled();
                 WriteSettings();
             }
@@ -125,7 +133,6 @@ namespace RaiManager.ViewModels
 
         public void DropFiles(List<string> files)
         {
-            StatusText = string.Join(", ", files);
             GameExePath = files.FirstOrDefault(file => Path.GetFileName(file) == gameExe);
             if (GameExePath == null)
             {
@@ -172,8 +179,6 @@ namespace RaiManager.ViewModels
             ModTitle = GetManifestProperty(document, "modTitle");
             GameTitle = GetManifestProperty(document, "gameTitle");
             GameExe = GetManifestProperty(document, "gameExe");
-
-            StatusText = $"Drag {GameExe} and drop it on this window to install {ModTitle}";
         }
 
         public async void OnClickInstall()
@@ -211,6 +216,7 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
             {
                 IsInstalled = false;
                 IsReadyToInstall = false;
+                StatusText = $"Drag {GameExe} and drop it on this window to install {ModTitle}";
                 return;
             }
 
@@ -220,6 +226,10 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
             // TODO: also check if doorstop config path is correct.
             IsInstalled = File.Exists(winhttpPath) && File.Exists(doorstopConfigPath);
             IsReadyToInstall = !IsInstalled;
+
+            StatusText = IsInstalled
+                ? $"Detected that {ModTitle} is installed. You can start the game from here, or just run it normally (you don't need to run the game through here every time)."
+                : $"{GameTitle} found in {GameExePath}";
         }
     }
 }
