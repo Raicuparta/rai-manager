@@ -34,6 +34,7 @@ namespace RaiManager.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref gameExePath, value);
+                CheckIfInstalled();
             }
         }
 
@@ -63,6 +64,23 @@ namespace RaiManager.ViewModels
         {
             get => installButtonText;
             private set => this.RaiseAndSetIfChanged(ref installButtonText, value);
+        }
+        
+        private bool isInstalled;
+        public bool IsInstalled
+        {
+            get => isInstalled;
+            private set
+            {
+                this.RaiseAndSetIfChanged(ref isInstalled, value);
+            }
+        }
+
+        private bool isReadyToInstall;
+        public bool IsReadyToInstall
+        {
+            get => isReadyToInstall;
+            private set => this.RaiseAndSetIfChanged(ref isReadyToInstall, value);
         }
 
         public MainWindowViewModel()
@@ -109,7 +127,39 @@ namespace RaiManager.ViewModels
 
         private async void OnClickInstall()
         {
-            
+            var gameDirectory = Path.GetDirectoryName(GameExePath);
+            var bepinexPath = Path.GetFullPath("./Mod/BepInEx");
+            await File.WriteAllTextAsync("./Mod/CopyToGame/doorstop_config.ini", $@"[UnityDoorstop]
+enabled=true
+targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
+            File.Copy("./Mod/CopyToGame/doorstop_config.ini", Path.Join(gameDirectory, "doorstop_config.ini"));
+            File.Copy("./Mod/CopyToGame/winhttp.dll", Path.Join(gameDirectory, "winhttp.dll"));
+            CheckIfInstalled();
+        }
+        
+        private void OnClickUninstall()
+        {
+            var gameDirectory = Path.GetDirectoryName(GameExePath);
+            File.Delete(Path.Join(gameDirectory, "doorstop_config.ini"));
+            File.Delete(Path.Join(gameDirectory, "winhttp.dll"));
+            CheckIfInstalled();
+        }
+
+        private void CheckIfInstalled()
+        {
+            if (GameExePath == null)
+            {
+                IsInstalled = false;
+                IsReadyToInstall = false;
+                return;
+            }
+
+            var gameDirectory = Path.GetDirectoryName(GameExePath);
+            var doorstopConfigPath = Path.Join(gameDirectory, "doorstop_config.ini");
+            var winhttpPath = Path.Join(gameDirectory, "winhttp.dll");
+            // TODO: also check if doorstop config path is correct.
+            IsInstalled = File.Exists(winhttpPath) && File.Exists(doorstopConfigPath);
+            IsReadyToInstall = !IsInstalled;
         }
     }
 }

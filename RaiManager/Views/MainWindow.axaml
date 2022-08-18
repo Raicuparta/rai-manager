@@ -17,7 +17,8 @@
 
     <StackPanel Margin="10" Spacing="10">
         <Image Height="100" Width="100" Source="{Binding Icon}" />
-        <TextBlock Text="{Binding StatusText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Button Command="{Binding OnClickInstall}" Content="{Binding InstallButtonText}" IsVisible="{Binding !!GameExePath}" />
+        <TextBlock FontSize="18" TextWrapping="Wrap" Text="{Binding StatusText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button Command="{Binding OnClickInstall}" Content="{Binding InstallButtonText}" IsVisible="{Binding IsReadyToInstall}" />
+        <Button Command="{Binding OnClickUninstall}" Content="Uninstall" IsVisible="{Binding IsInstalled}" />
     </StackPanel>
 </Window>
