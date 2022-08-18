@@ -1,3 +1,4 @@
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
 using RaiManager.ViewModels;
@@ -21,7 +22,7 @@ namespace RaiManager.Views
 
             if (fileNames == null) return;
 
-            ((MainWindowViewModel) DataContext).DropFiles(fileNames);
+            ((MainWindowViewModel) DataContext).DropFiles(fileNames.ToList());
         }
     }
 }

@@ -17,8 +17,7 @@
 
     <StackPanel Margin="10" Spacing="10">
         <Image Height="100" Width="100" Source="{Binding Icon}" />
-        <TextBlock Text="{Binding FileNamesText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <TextBlock Text="{Binding ModTitle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Text="{Binding StatusText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button Command="{Binding OnClickInstall}" Content="{Binding InstallButtonText}" IsVisible="{Binding !!GameExePath}" />
     </StackPanel>
-
 </Window>
