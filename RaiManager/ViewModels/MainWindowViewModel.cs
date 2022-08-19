@@ -47,33 +47,28 @@ namespace RaiManager.ViewModels
             }
         }
 
-        private string gameTitle = "Game Title";
+        private string gameTitle = "";
         public string GameTitle
         {
             get => gameTitle;
             private set => this.RaiseAndSetIfChanged(ref gameTitle, value);
         }
 
-        private string modTitle = "Mod Title";
+        private string modTitle = "";
         public string ModTitle
         {
             get => modTitle;
             private set => this.RaiseAndSetIfChanged(ref modTitle, value);
         }
 
-        private string gameExe = "Game.exe";
+        private string gameExe = "";
         public string GameExe
         {
             get => gameExe;
             private set => this.RaiseAndSetIfChanged(ref gameExe, value);
         }
 
-        private string installButtonText = "Install";
-        public string InstallButtonText
-        {
-            get => installButtonText;
-            private set => this.RaiseAndSetIfChanged(ref installButtonText, value);
-        }
+        private bool requireAdmin;
         
         private bool isInstalled;
         public bool IsInstalled
@@ -178,6 +173,7 @@ namespace RaiManager.ViewModels
             ModTitle = GetManifestProperty(document, "modTitle");
             GameTitle = GetManifestProperty(document, "gameTitle");
             GameExe = GetManifestProperty(document, "gameExe");
+            requireAdmin = GetManifestProperty(document, "requireAdmin").Equals("true", StringComparison.OrdinalIgnoreCase);
         }
 
         public async void OnClickInstall()
@@ -215,7 +211,20 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
             {
                 return;
             }
-            Process.Start(GameExePath);
+
+            if (requireAdmin)
+            {
+                var process = new Process();
+                process.StartInfo.UseShellExecute = true;
+                process.StartInfo.Verb = "runas";
+                process.StartInfo.FileName = "cmd";
+                process.StartInfo.Arguments = $"/k \"{GameExePath}\" & exit";
+                process.Start();
+            }
+            else
+            {
+                Process.Start(GameExePath);
+            }
         }
 
         public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target) {
@@ -235,7 +244,9 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
             {
                 IsInstalled = false;
                 IsReadyToInstall = false;
-                StatusText = $"Drag {GameExe} and drop it on this window to install {ModTitle}";
+                StatusText = GameExe.Length > 0
+                    ? $"Drag {GameExe} and drop it on this window to install {ModTitle}"
+                    : $"Startup failed. Files may be corrupted. Please note that this tool doesn't support the itch app sandbox mode, since it needs to modify system files.";
                 return;
             }
 
