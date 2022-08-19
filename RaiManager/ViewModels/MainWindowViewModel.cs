@@ -81,6 +81,8 @@ namespace RaiManager.ViewModels
         }
 
         private bool isReadyToInstall;
+        private string? modId = "";
+
         public bool IsReadyToInstall
         {
             get => isReadyToInstall;
@@ -89,25 +91,36 @@ namespace RaiManager.ViewModels
 
         public MainWindowViewModel()
         {
-            LoadManifest();
-            LoadIcon();
-            LoadSettings();
+            SetUp();
         }
 
-        private async void LoadSettings()
+        private async void SetUp()
         {
-            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var settingsDocument = await ReadXmlDocument(Path.Join(appDataPath, "RaiManager/settings.xml"));
-            GameExePath = GetXmlProperty(settingsDocument, "/settings/gameExePath");
+            LoadIcon();
+            await LoadManifest();
+            await LoadSettings();
+            CheckIfInstalled();
+        }
+
+        private async Task LoadSettings()
+        {
+            var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
+            var modDataPath = Path.Join(managerDataPath, modId);
+            var settingsDocument = await ReadXmlDocument(Path.Join(modDataPath, "settings.xml"));
+            var settingsGameExePath = GetXmlProperty(settingsDocument, "/settings/gameExePath");
+            if (settingsGameExePath != null)
+            {
+                GameExePath = settingsGameExePath;
+            }
         }
         
         private async void WriteSettings()
         {
-            if (GameExePath == null) return;
+            if (GameExePath == null || modId == null) return;
             
-            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var raiManagerDataPath = Path.Join(appDataPath, "RaiManager");
-            var settingsPath = Path.Join(raiManagerDataPath, "settings.xml");
+            var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
+            var modDataPath = Path.Join(managerDataPath, modId);
+            var settingsPath = Path.Join(modDataPath, "settings.xml");
             var settingsDocument = await ReadXmlDocument(settingsPath) ?? new XmlDocument();
 
             var gameExeNode = settingsDocument.SelectSingleNode("/settings/gameExePath");
@@ -121,7 +134,7 @@ namespace RaiManager.ViewModels
                 gameExeNode.InnerText = GameExePath;
             }
 
-            Directory.CreateDirectory(raiManagerDataPath);
+            Directory.CreateDirectory(modDataPath);
             settingsDocument.Save(settingsPath);
         }
 
@@ -164,13 +177,14 @@ namespace RaiManager.ViewModels
             return document;
         }
         
-        private async void LoadManifest()
+        private async Task LoadManifest()
         {
             var document = await ReadXmlDocument(manifestPath);
 
             if (document == null) throw new FileNotFoundException($"Failed to find manifest in {manifestPath}");
 
             ModTitle = GetManifestProperty(document, "modTitle");
+            modId = GetManifestProperty(document, "id");
             GameTitle = GetManifestProperty(document, "gameTitle");
             GameExe = GetManifestProperty(document, "gameExe");
             requireAdmin = GetManifestProperty(document, "requireAdmin").Equals("true", StringComparison.OrdinalIgnoreCase);
