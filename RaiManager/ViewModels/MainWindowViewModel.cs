@@ -47,32 +47,25 @@ namespace RaiManager.ViewModels
             }
         }
 
-        private string gameTitle = "Game Title";
+        private string gameTitle = "";
         public string GameTitle
         {
             get => gameTitle;
             private set => this.RaiseAndSetIfChanged(ref gameTitle, value);
         }
 
-        private string modTitle = "Mod Title";
+        private string modTitle = "";
         public string ModTitle
         {
             get => modTitle;
             private set => this.RaiseAndSetIfChanged(ref modTitle, value);
         }
 
-        private string gameExe = "Game.exe";
+        private string gameExe = "";
         public string GameExe
         {
             get => gameExe;
             private set => this.RaiseAndSetIfChanged(ref gameExe, value);
-        }
-
-        private string installButtonText = "Install";
-        public string InstallButtonText
-        {
-            get => installButtonText;
-            private set => this.RaiseAndSetIfChanged(ref installButtonText, value);
         }
         
         private bool isInstalled;
@@ -203,10 +196,17 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
         
         public void OnClickUninstall()
         {
-            var gameDirectory = Path.GetDirectoryName(GameExePath);
-            File.Delete(Path.Join(gameDirectory, "doorstop_config.ini"));
-            File.Delete(Path.Join(gameDirectory, "winhttp.dll"));
-            CheckIfInstalled();
+            // var gameDirectory = Path.GetDirectoryName(GameExePath);
+            // File.Delete(Path.Join(gameDirectory, "doorstop_config.ini"));
+            // File.Delete(Path.Join(gameDirectory, "winhttp.dll"));
+            // CheckIfInstalled();
+            
+            if (GameExePath == null)
+            {
+                return;
+            }
+
+            Process.Start(GameExePath);
         }
 
         public void OnClickStart()
@@ -215,7 +215,23 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
             {
                 return;
             }
-            Process.Start(GameExePath);
+
+            using (Process process = new Process())
+            {
+                try
+                {
+                    process.StartInfo.UseShellExecute = true;
+                    process.StartInfo.Verb = "runas";
+                    process.StartInfo.FileName = "cmd";
+                    process.StartInfo.Arguments = $"/k \"{GameExePath}\" & exit";
+                    process.Start();
+                }
+                catch (Exception e)
+                {
+                    StatusText = e.Message;
+                }
+            }
+            // Process.Start(GameExePath);
         }
 
         public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target) {
@@ -235,7 +251,9 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
             {
                 IsInstalled = false;
                 IsReadyToInstall = false;
-                StatusText = $"Drag {GameExe} and drop it on this window to install {ModTitle}";
+                StatusText = GameExe.Length > 0
+                    ? $"Drag {GameExe} and drop it on this window to install {ModTitle}"
+                    : $"Startup failed. Files may be corrupted. Please note that this tool doesn't support the itch app sandbox mode, since it needs to modify system files.";
                 return;
             }
 

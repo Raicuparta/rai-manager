@@ -18,7 +18,7 @@
     <StackPanel Margin="10" Spacing="10">
         <Image Height="100" Width="100" Source="{Binding Icon}" />
         <TextBlock FontSize="18" TextWrapping="Wrap" Text="{Binding StatusText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Button Command="{Binding OnClickInstall}" Content="{Binding InstallButtonText}" IsVisible="{Binding IsReadyToInstall}" />
+        <Button Command="{Binding OnClickInstall}" Content="Install" IsVisible="{Binding IsReadyToInstall}" />
         <Button Command="{Binding OnClickStart}" Content="Start Game" IsVisible="{Binding IsInstalled}" />
         <Button Classes="Outline Accent" Command="{Binding OnClickUninstall}" Content="Uninstall" IsVisible="{Binding IsInstalled}" />
     </StackPanel>
