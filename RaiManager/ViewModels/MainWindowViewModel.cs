@@ -67,6 +67,8 @@ namespace RaiManager.ViewModels
             get => gameExe;
             private set => this.RaiseAndSetIfChanged(ref gameExe, value);
         }
+
+        private bool requireAdmin;
         
         private bool isInstalled;
         public bool IsInstalled
@@ -171,6 +173,7 @@ namespace RaiManager.ViewModels
             ModTitle = GetManifestProperty(document, "modTitle");
             GameTitle = GetManifestProperty(document, "gameTitle");
             GameExe = GetManifestProperty(document, "gameExe");
+            requireAdmin = GetManifestProperty(document, "requireAdmin").Equals("true", StringComparison.OrdinalIgnoreCase);
         }
 
         public async void OnClickInstall()
@@ -196,17 +199,10 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
         
         public void OnClickUninstall()
         {
-            // var gameDirectory = Path.GetDirectoryName(GameExePath);
-            // File.Delete(Path.Join(gameDirectory, "doorstop_config.ini"));
-            // File.Delete(Path.Join(gameDirectory, "winhttp.dll"));
-            // CheckIfInstalled();
-            
-            if (GameExePath == null)
-            {
-                return;
-            }
-
-            Process.Start(GameExePath);
+            var gameDirectory = Path.GetDirectoryName(GameExePath);
+            File.Delete(Path.Join(gameDirectory, "doorstop_config.ini"));
+            File.Delete(Path.Join(gameDirectory, "winhttp.dll"));
+            CheckIfInstalled();
         }
 
         public void OnClickStart()
@@ -216,22 +212,19 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
                 return;
             }
 
-            using (Process process = new Process())
+            if (requireAdmin)
             {
-                try
-                {
-                    process.StartInfo.UseShellExecute = true;
-                    process.StartInfo.Verb = "runas";
-                    process.StartInfo.FileName = "cmd";
-                    process.StartInfo.Arguments = $"/k \"{GameExePath}\" & exit";
-                    process.Start();
-                }
-                catch (Exception e)
-                {
-                    StatusText = e.Message;
-                }
+                var process = new Process();
+                process.StartInfo.UseShellExecute = true;
+                process.StartInfo.Verb = "runas";
+                process.StartInfo.FileName = "cmd";
+                process.StartInfo.Arguments = $"/k \"{GameExePath}\" & exit";
+                process.Start();
             }
-            // Process.Start(GameExePath);
+            else
+            {
+                Process.Start(GameExePath);
+            }
         }
 
         public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target) {
