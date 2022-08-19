@@ -259,7 +259,7 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
                 IsInstalled = false;
                 IsReadyToInstall = false;
                 StatusText = GameExe.Length > 0
-                    ? $"Drag {GameExe} and drop it on this window to install {ModTitle}"
+                    ? $"Drag {GameExe} and drop it on this window to install {ModTitle}.\n\nNote that this tool isn't compatible with the \"sandbox mode\" in the itch.io app."
                     : $"Startup failed. Files may be corrupted. Please note that this tool doesn't support the itch app sandbox mode, since it needs to modify system files.";
                 return;
             }
