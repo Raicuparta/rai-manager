@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Xml;
 using Avalonia.Media.Imaging;
@@ -12,81 +13,81 @@ namespace RaiManager.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private const string iconPath = "./Mod/icon.png";
-        private const string manifestPath = "./Mod/manifest.xml";
-        private Bitmap? icon;
+        private const string IconPath = "./Mod/icon.png";
+        private const string ManifestPath = "./Mod/manifest.xml";
+        private Bitmap? _icon;
         public Bitmap? Icon
         {
-            get => icon;
-            private set => this.RaiseAndSetIfChanged(ref icon, value);
+            get => _icon;
+            private set => this.RaiseAndSetIfChanged(ref _icon, value);
         }
         
-        private string statusText = "Loading...";
+        private string _statusText = "Loading...";
         public string StatusText
         {
-            get => statusText;
-            set => this.RaiseAndSetIfChanged(ref statusText, value);
+            get => _statusText;
+            set => this.RaiseAndSetIfChanged(ref _statusText, value);
         }
         
-        private string? gameExePath;
+        private string? _gameExePath;
         public string? GameExePath
         {
-            get => gameExePath;
+            get => _gameExePath;
             set
             {
                 if (value != null && !File.Exists(value))
                 {
-                    this.RaiseAndSetIfChanged(ref gameExePath, null);
+                    this.RaiseAndSetIfChanged(ref _gameExePath, null);
                 }
                 else
                 {
-                    this.RaiseAndSetIfChanged(ref gameExePath, value);
+                    this.RaiseAndSetIfChanged(ref _gameExePath, value);
                 }
                 CheckIfInstalled();
                 WriteSettings();
             }
         }
 
-        private string gameTitle = "";
+        private string _gameTitle = "";
         public string GameTitle
         {
-            get => gameTitle;
-            private set => this.RaiseAndSetIfChanged(ref gameTitle, value);
+            get => _gameTitle;
+            private set => this.RaiseAndSetIfChanged(ref _gameTitle, value);
         }
 
-        private string modTitle = "";
+        private string _modTitle = "";
         public string ModTitle
         {
-            get => modTitle;
-            private set => this.RaiseAndSetIfChanged(ref modTitle, value);
+            get => _modTitle;
+            private set => this.RaiseAndSetIfChanged(ref _modTitle, value);
         }
 
-        private string gameExe = "";
+        private string _gameExe = "";
         public string GameExe
         {
-            get => gameExe;
-            private set => this.RaiseAndSetIfChanged(ref gameExe, value);
+            get => _gameExe;
+            private set => this.RaiseAndSetIfChanged(ref _gameExe, value);
         }
 
-        private bool requireAdmin;
+        private bool _requireAdmin;
         
-        private bool isInstalled;
+        private bool _isInstalled;
         public bool IsInstalled
         {
-            get => isInstalled;
+            get => _isInstalled;
             private set
             {
-                this.RaiseAndSetIfChanged(ref isInstalled, value);
+                this.RaiseAndSetIfChanged(ref _isInstalled, value);
             }
         }
 
-        private bool isReadyToInstall;
-        private string? modId = "";
+        private bool _isReadyToInstall;
+        private string? _modId = "";
 
         public bool IsReadyToInstall
         {
-            get => isReadyToInstall;
-            private set => this.RaiseAndSetIfChanged(ref isReadyToInstall, value);
+            get => _isReadyToInstall;
+            private set => this.RaiseAndSetIfChanged(ref _isReadyToInstall, value);
         }
 
         public MainWindowViewModel()
@@ -105,7 +106,7 @@ namespace RaiManager.ViewModels
         private async Task LoadSettings()
         {
             var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
-            var modDataPath = Path.Join(managerDataPath, modId);
+            var modDataPath = Path.Join(managerDataPath, _modId);
             var settingsDocument = await ReadXmlDocument(Path.Join(modDataPath, "settings.xml"));
             var settingsGameExePath = GetXmlProperty(settingsDocument, "/settings/gameExePath");
             if (settingsGameExePath != null)
@@ -116,10 +117,10 @@ namespace RaiManager.ViewModels
         
         private async void WriteSettings()
         {
-            if (GameExePath == null || modId == null) return;
+            if (GameExePath == null || _modId == null) return;
             
             var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
-            var modDataPath = Path.Join(managerDataPath, modId);
+            var modDataPath = Path.Join(managerDataPath, _modId);
             var settingsPath = Path.Join(modDataPath, "settings.xml");
             var settingsDocument = await ReadXmlDocument(settingsPath) ?? new XmlDocument();
 
@@ -140,7 +141,7 @@ namespace RaiManager.ViewModels
 
         public void DropFiles(List<string> files)
         {
-            GameExePath = files.FirstOrDefault(file => Path.GetFileName(file) == gameExe);
+            GameExePath = files.FirstOrDefault(file => Path.GetFileName(file) == _gameExe);
             if (GameExePath == null)
             {
                 StatusText = $"Wrong file. Drag {GameExe} and drop it on this window to install {ModTitle}";
@@ -149,9 +150,9 @@ namespace RaiManager.ViewModels
         
         private async void LoadIcon()
         {
-            if (File.Exists(iconPath))
+            if (File.Exists(IconPath))
             {
-                Icon = await Task.Run(() => Bitmap.DecodeToWidth(File.OpenRead(iconPath), 400));
+                Icon = await Task.Run(() => Bitmap.DecodeToWidth(File.OpenRead(IconPath), 400));
             }
         }
 
@@ -179,15 +180,15 @@ namespace RaiManager.ViewModels
         
         private async Task LoadManifest()
         {
-            var document = await ReadXmlDocument(manifestPath);
+            var document = await ReadXmlDocument(ManifestPath);
 
-            if (document == null) throw new FileNotFoundException($"Failed to find manifest in {manifestPath}");
+            if (document == null) throw new FileNotFoundException($"Failed to find manifest in {ManifestPath}");
 
             ModTitle = GetManifestProperty(document, "modTitle");
-            modId = GetManifestProperty(document, "id");
+            _modId = GetManifestProperty(document, "id");
             GameTitle = GetManifestProperty(document, "gameTitle");
             GameExe = GetManifestProperty(document, "gameExe");
-            requireAdmin = GetManifestProperty(document, "requireAdmin").Equals("true", StringComparison.OrdinalIgnoreCase);
+            _requireAdmin = GetManifestProperty(document, "requireAdmin").Equals("true", StringComparison.OrdinalIgnoreCase);
         }
 
         public async void OnClickInstall()
@@ -196,6 +197,12 @@ namespace RaiManager.ViewModels
             {
 
                 var gameDirectory = Path.GetDirectoryName(GameExePath);
+
+                if (gameDirectory == null)
+                {
+                    throw new DirectoryNotFoundException($"Directory not found for path ${GameExePath}");
+                }
+                
                 var bepinexPath = Path.GetFullPath("./Mod/BepInEx");
                 await File.WriteAllTextAsync("./Mod/CopyToGame/doorstop_config.ini", $@"[UnityDoorstop]
 enabled=true
@@ -226,7 +233,7 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
                 return;
             }
 
-            if (requireAdmin)
+            if (_requireAdmin)
             {
                 var process = new Process();
                 process.StartInfo.UseShellExecute = true;
@@ -261,6 +268,14 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
                 StatusText = GameExe.Length > 0
                     ? $"Drag {GameExe} and drop it on this window to install {ModTitle}.\n\nNote that this tool isn't compatible with the \"sandbox mode\" in the itch.io app."
                     : $"Startup failed. Files may be corrupted. Please note that this tool doesn't support the itch app sandbox mode, since it needs to modify system files.";
+
+                if (new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
+                {
+                    StatusText +=
+                        "\n\nWarning: It seems like you are running this app with administrator privileges. This might make it impossible to drag & drop the game exe onto this window. Please close the app and restart it with normal privileges.";
+                }
+
+                
                 return;
             }
 
