@@ -5,13 +5,10 @@ namespace RaiManager.GameFinder
     public abstract class BaseFinder
     {
         protected readonly string GameExe;
-        protected readonly string GameFolder;
-        private readonly string _managedPath = Path.Combine("Neon White_Data", "Managed");
 
-        protected BaseFinder(string gameExe, string gameFolder)
+        protected BaseFinder(string gameExe)
         {
             GameExe = gameExe;
-            GameFolder = gameFolder;
         }
 
         public abstract string? FindGamePath();

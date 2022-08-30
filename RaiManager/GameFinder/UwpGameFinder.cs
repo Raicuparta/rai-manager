@@ -7,9 +7,11 @@ namespace RaiManager.GameFinder
     public class UwpGameFinder : BaseFinder
     {
         private const string RegistryPath = @"Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages";
+        private readonly string _uwpDisplayName;
 
-        public UwpGameFinder(string gameExe, string gameFolder): base(gameExe, gameFolder)
+        public UwpGameFinder(string gameExe, string uwpDisplayName): base(gameExe)
         {
+            _uwpDisplayName = uwpDisplayName;
         }
 
         public override string? FindGamePath()
@@ -23,7 +25,7 @@ namespace RaiManager.GameFinder
                 var packageDisplayName = (string)appPackageKey.GetValue("DisplayName");
 
                 // TODO "GameFolder" should actually be a specific UwpDisplayName field in the mod manifest.
-                if(!String.IsNullOrEmpty(packageDisplayName) && packageDisplayName.Contains(GameFolder))
+                if(!String.IsNullOrEmpty(packageDisplayName) && packageDisplayName.Contains(_uwpDisplayName))
                 {
                     gamePath = (string)appPackageKey.GetValue("PackageRootFolder");
                     break;

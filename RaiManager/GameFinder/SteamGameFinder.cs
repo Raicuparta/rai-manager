@@ -14,8 +14,11 @@ namespace RaiManager.GameFinder
         private const string LibraryFoldersPath = "steamapps/libraryfolders.vdf";
         private const int MaxLibraryCount = 10;
 
-        public SteamGameFinder(string gameExe, string gameFolder): base(gameExe, gameFolder)
+        private readonly string _steamGameFolder;
+
+        public SteamGameFinder(string gameExe, string steamGameFolder): base(gameExe)
         {
+            _steamGameFolder = steamGameFolder;
         }
 
         public override string? FindGamePath()
@@ -28,7 +31,7 @@ namespace RaiManager.GameFinder
                 return "Steam not found in Registry.";
             }
 
-            var defaultLocation = $"{steamPath}/{CommonPath}/{GameFolder}";
+            var defaultLocation = $"{steamPath}/{CommonPath}/{_steamGameFolder}";
             if (IsValidGamePath(defaultLocation))
             {
                 return defaultLocation;
@@ -61,7 +64,7 @@ namespace RaiManager.GameFinder
                     continue;
                 }
 
-                var gamePath = $"{libraryPath}/{CommonPath}/{GameFolder}";
+                var gamePath = $"{libraryPath}/{CommonPath}/{_steamGameFolder}";
                 if (IsValidGamePath(gamePath))
                 {
                     return gamePath;
