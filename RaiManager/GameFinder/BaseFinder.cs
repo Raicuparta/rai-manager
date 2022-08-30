@@ -4,6 +4,8 @@ namespace RaiManager.GameFinder
 {
     public abstract class BaseFinder
     {
+        public string GamePath => FindGamePath();
+
         protected readonly string GameExe;
 
         protected BaseFinder(string gameExe)
