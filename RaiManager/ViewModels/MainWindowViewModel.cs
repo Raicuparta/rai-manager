@@ -98,6 +98,13 @@ namespace RaiManager.ViewModels
             get => _steamGamePath;
             private set => this.RaiseAndSetIfChanged(ref _steamGamePath, value);
         }
+        
+        private string _uwpGamePath = "[UWP path]";
+        public string UwpGamePath
+        {
+            get => _uwpGamePath;
+            private set => this.RaiseAndSetIfChanged(ref _uwpGamePath, value);
+        }
 
         public MainWindowViewModel()
         {
@@ -113,7 +120,9 @@ namespace RaiManager.ViewModels
             // TODO game title isn't necessarily the game folder.
             // TODO game folder can be fetched from steam manifest file.
             _steamGameFinder ??= new SteamGameFinder(GameExe, GameTitle);
+            var uwpGameFinder = new UwpGameFinder("Firewatch.exe", "Firewatch");
             SteamGamePath = _steamGameFinder.FindGamePath() ?? "Steam not found";
+            UwpGamePath = uwpGameFinder.FindGamePath() ?? "UWP not found";
             CheckIfInstalled();
         }
 
