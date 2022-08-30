@@ -98,6 +98,13 @@ namespace RaiManager.ViewModels
             get => _steamGamePath;
             private set => this.RaiseAndSetIfChanged(ref _steamGamePath, value);
         }
+
+        private string _gogGamePath = "[GOG path]";
+        public string GogGamePath
+        {
+            get => _gogGamePath;
+            private set => this.RaiseAndSetIfChanged(ref _gogGamePath, value);
+        }
         
         private string _uwpGamePath = "[UWP path]";
         public string UwpGamePath
@@ -121,8 +128,10 @@ namespace RaiManager.ViewModels
             // TODO game folder can be fetched from steam manifest file.
             _steamGameFinder ??= new SteamGameFinder(GameExe, GameTitle);
             var uwpGameFinder = new UwpGameFinder("Firewatch.exe", "Firewatch");
+            var gogGameFinder = new GogGameFinder("Firewatch.exe", "1459256379");
             SteamGamePath = _steamGameFinder.FindGamePath() ?? "Steam not found";
             UwpGamePath = uwpGameFinder.FindGamePath() ?? "UWP not found";
+            GogGamePath = gogGameFinder.FindGamePath() ?? "GOG not found";
             CheckIfInstalled();
         }
 
