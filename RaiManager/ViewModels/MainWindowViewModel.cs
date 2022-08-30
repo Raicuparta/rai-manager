@@ -99,6 +99,13 @@ namespace RaiManager.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _steamGamePath, value);
         }
 
+        private string _epicGamePath = "[Epic path]";
+        public string EpicGamePath
+        {
+            get => _epicGamePath;
+            private set => this.RaiseAndSetIfChanged(ref _epicGamePath, value);
+        }
+
         private string _gogGamePath = "[GOG path]";
         public string GogGamePath
         {
@@ -129,9 +136,11 @@ namespace RaiManager.ViewModels
             _steamGameFinder ??= new SteamGameFinder(GameExe, GameTitle);
             var uwpGameFinder = new UwpGameFinder("Firewatch.exe", "Firewatch");
             var gogGameFinder = new GogGameFinder("Firewatch.exe", "1459256379");
+            var epicGameFinder = new EpicGameFinder("AShortHike.exe", "018230f620e34503926e5c76525a8fd1");
             SteamGamePath = _steamGameFinder.FindGamePath() ?? "Steam not found";
             UwpGamePath = uwpGameFinder.FindGamePath() ?? "UWP not found";
             GogGamePath = gogGameFinder.FindGamePath() ?? "GOG not found";
+            EpicGamePath = epicGameFinder.FindGamePath() ?? "Epic not found";
             CheckIfInstalled();
         }
 
