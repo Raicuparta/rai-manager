@@ -7,6 +7,7 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Xml;
 using Avalonia.Media.Imaging;
+using RaiManager.GameFinder;
 using ReactiveUI;
 
 namespace RaiManager.ViewModels
@@ -15,6 +16,7 @@ namespace RaiManager.ViewModels
     {
         private const string IconPath = "./Mod/icon.png";
         private const string ManifestPath = "./Mod/manifest.xml";
+        private SteamGameFinder? _steamGameFinder;
         private Bitmap? _icon;
         public Bitmap? Icon
         {
@@ -90,6 +92,13 @@ namespace RaiManager.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _isReadyToInstall, value);
         }
 
+        private string _steamGamePath = "[Steam path]";
+        public string SteamGamePath
+        {
+            get => _steamGamePath;
+            private set => this.RaiseAndSetIfChanged(ref _steamGamePath, value);
+        }
+
         public MainWindowViewModel()
         {
             SetUp();
@@ -98,8 +107,13 @@ namespace RaiManager.ViewModels
         private async void SetUp()
         {
             LoadIcon();
+            
             await LoadManifest();
             await LoadSettings();
+            // TODO game title isn't necessarily the game folder.
+            // TODO game folder can be fetched from steam manifest file.
+            _steamGameFinder ??= new SteamGameFinder(GameExe, GameTitle);
+            SteamGamePath = _steamGameFinder.FindGamePath() ?? "Steam not found";
             CheckIfInstalled();
         }
 
