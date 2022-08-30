@@ -16,7 +16,6 @@ namespace RaiManager.ViewModels
     {
         private const string IconPath = "./Mod/icon.png";
         private const string ManifestPath = "./Mod/manifest.xml";
-        private SteamGameFinder? _steamGameFinder;
         private Bitmap? _icon;
         public Bitmap? Icon
         {
@@ -29,6 +28,13 @@ namespace RaiManager.ViewModels
         {
             get => _statusText;
             set => this.RaiseAndSetIfChanged(ref _statusText, value);
+        }
+
+        private List<BaseFinder> _gameFinders = new();
+        public List<BaseFinder> GameFinders
+        {
+            get => _gameFinders;
+            set => this.RaiseAndSetIfChanged(ref _gameFinders, value);
         }
         
         private string? _gameExePath;
@@ -92,34 +98,6 @@ namespace RaiManager.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _isReadyToInstall, value);
         }
 
-        private string _steamGamePath = "[Steam path]";
-        public string SteamGamePath
-        {
-            get => _steamGamePath;
-            private set => this.RaiseAndSetIfChanged(ref _steamGamePath, value);
-        }
-
-        private string _epicGamePath = "[Epic path]";
-        public string EpicGamePath
-        {
-            get => _epicGamePath;
-            private set => this.RaiseAndSetIfChanged(ref _epicGamePath, value);
-        }
-
-        private string _gogGamePath = "[GOG path]";
-        public string GogGamePath
-        {
-            get => _gogGamePath;
-            private set => this.RaiseAndSetIfChanged(ref _gogGamePath, value);
-        }
-        
-        private string _uwpGamePath = "[UWP path]";
-        public string UwpGamePath
-        {
-            get => _uwpGamePath;
-            private set => this.RaiseAndSetIfChanged(ref _uwpGamePath, value);
-        }
-
         public MainWindowViewModel()
         {
             SetUp();
@@ -131,16 +109,16 @@ namespace RaiManager.ViewModels
             
             await LoadManifest();
             await LoadSettings();
-            // TODO game title isn't necessarily the game folder.
-            // TODO game folder can be fetched from steam manifest file.
-            _steamGameFinder ??= new SteamGameFinder(GameExe, GameTitle);
-            var uwpGameFinder = new UwpGameFinder("Firewatch.exe", "Firewatch");
-            var gogGameFinder = new GogGameFinder("Firewatch.exe", "1459256379");
-            var epicGameFinder = new EpicGameFinder("AShortHike.exe", "018230f620e34503926e5c76525a8fd1");
-            SteamGamePath = _steamGameFinder.FindGamePath() ?? "Steam not found";
-            UwpGamePath = uwpGameFinder.FindGamePath() ?? "UWP not found";
-            GogGamePath = gogGameFinder.FindGamePath() ?? "GOG not found";
-            EpicGamePath = epicGameFinder.FindGamePath() ?? "Epic not found";
+            
+            // TODO fetch details from manifest.
+            GameFinders = new List<BaseFinder>()
+            {
+                new SteamGameFinder(GameExe, GameTitle),
+                new UwpGameFinder("Firewatch.exe", "Firewatch"),
+                new GogGameFinder("Firewatch.exe", "1459256379"),
+                new EpicGameFinder("AShortHike.exe", "018230f620e34503926e5c76525a8fd1")
+            };
+            
             CheckIfInstalled();
         }
 
