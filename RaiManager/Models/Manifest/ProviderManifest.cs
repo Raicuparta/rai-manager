@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using RaiManager.Models.GameProviders;
 
 namespace RaiManager.Models.Manifest;
 
@@ -6,8 +7,8 @@ namespace RaiManager.Models.Manifest;
 public class ProviderManifest
 {    
     /// <summary>
-    /// Unique identifier for this provider. Must match the <see cref="GameFinder.BaseFinder.Id"/> property of a class
-    /// that extends <see cref="GameFinder.BaseFinder"/>.
+    /// Unique identifier for this provider. Must match the <sGameProvidereProvider.Id"/> property of a class
+    /// that extends <see cref="GameProvider"/>.
     /// </summary>
     [JsonProperty("providerId")]
     public string ProviderId {get; protected set;}

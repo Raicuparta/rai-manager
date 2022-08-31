@@ -4,9 +4,9 @@ using System.IO;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
-namespace RaiManager.Models.GameFinder;
+namespace RaiManager.Models.GameProviders;
 
-public class EpicGameFinder : BaseFinder
+public class EpicProvider : GameProvider
 {
 	private const string RegistryPath = @"SOFTWARE\WOW6432Node\Epic Games\EpicGamesLauncher";
 	private const string RegistryName = "AppDataPath";
@@ -17,7 +17,7 @@ public class EpicGameFinder : BaseFinder
 	public override string DisplayName => "Epic";
 	public override string Id => "epic";
 	
-	public EpicGameFinder(string gameExe, bool requireAdmin, string epicGameId): base(gameExe, requireAdmin)
+	public EpicProvider(string gameExe, bool requireAdmin, string epicGameId): base(gameExe, requireAdmin)
 	{
 		_epicGameId = epicGameId;
 		Initialize();
