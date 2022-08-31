@@ -6,7 +6,6 @@ public class GogProvider: GameProvider
 {
     public override string DisplayName => "GOG";
     public override string Id => "gog";
-    public override string Description => "";
     
     private const string RegistryPath = @"SOFTWARE\WOW6432Node\GOG.com\Games";
 

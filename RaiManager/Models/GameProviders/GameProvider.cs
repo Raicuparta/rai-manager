@@ -10,7 +10,6 @@ public abstract class GameProvider: ReactiveObject
 {
     public abstract string DisplayName { get; }
     public abstract string Id { get; }
-    public abstract string Description { get; }
 
     private string? _gamePath;
     public string? GamePath
@@ -35,6 +34,13 @@ public abstract class GameProvider: ReactiveObject
     {
         get => _isReadyToInstall;
         private set => this.RaiseAndSetIfChanged(ref _isReadyToInstall, value);
+    }
+    
+    private bool _isAvailable;
+    public bool IsAvailable
+    {
+        get => _isAvailable;
+        private set => this.RaiseAndSetIfChanged(ref _isAvailable, value);
     }
 
     private readonly bool _requireAdmin;
@@ -121,6 +127,8 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
     
     private void CheckIfInstalled()
     {
+        IsAvailable = GamePath != null;
+        
         if (GamePath == null)
         {
             IsInstalled = false;

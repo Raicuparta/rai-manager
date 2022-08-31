@@ -10,7 +10,6 @@ public class SteamProvider : GameProvider
 {
     public override string DisplayName => "Steam";
     public override string Id => "steam";
-    public override string Description => "";
 
     private const string RegistryPath = @"SOFTWARE\Valve\Steam";
     private const string RegistryName = "SteamPath";

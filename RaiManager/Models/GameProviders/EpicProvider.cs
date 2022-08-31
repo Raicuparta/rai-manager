@@ -16,7 +16,6 @@ public class EpicProvider : GameProvider
 
 	public override string DisplayName => "Epic";
 	public override string Id => "epic";
-	public override string Description => "";
 	
 	public EpicProvider(string gameExe, bool requireAdmin, string epicGameId): base(gameExe, requireAdmin)
 	{
