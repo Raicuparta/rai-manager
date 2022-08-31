@@ -39,10 +39,10 @@ public abstract class GameProvider: ReactiveObject
     private readonly bool _requireAdmin;
 
     private string? _gameExe;
-    protected string? GameExe
+    public string? GameExe
     {
         get => _gameExe;
-        set => this.RaiseAndSetIfChanged(ref _gameExe, value);
+        protected set => this.RaiseAndSetIfChanged(ref _gameExe, value);
     }
 
     protected GameProvider(string gameExe, bool requireAdmin)
