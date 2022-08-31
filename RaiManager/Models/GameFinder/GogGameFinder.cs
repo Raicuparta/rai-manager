@@ -14,6 +14,7 @@ public class GogGameFinder: BaseFinder
     public GogGameFinder(string gameExe, bool requireAdmin, string gogId) : base(gameExe, requireAdmin)
     {
         _gogId = gogId;
+        Initialize();
     }
 
     public override string? FindGamePath()

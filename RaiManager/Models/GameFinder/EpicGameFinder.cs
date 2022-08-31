@@ -20,6 +20,7 @@ public class EpicGameFinder : BaseFinder
 	public EpicGameFinder(string gameExe, bool requireAdmin, string epicGameId): base(gameExe, requireAdmin)
 	{
 		_epicGameId = epicGameId;
+		Initialize();
 	}
 
 	public override string? FindGamePath()

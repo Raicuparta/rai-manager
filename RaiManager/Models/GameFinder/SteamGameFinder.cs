@@ -22,6 +22,7 @@ public class SteamGameFinder : BaseFinder
     public SteamGameFinder(string gameExe, bool requireAdmin, string steamGameFolder): base(gameExe, requireAdmin)
     {
         _steamGameFolder = steamGameFolder;
+        Initialize();
     }
 
     public override string? FindGamePath()
