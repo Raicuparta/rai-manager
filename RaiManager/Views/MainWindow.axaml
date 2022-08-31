@@ -30,7 +30,14 @@
                                     <TextBlock Classes="Headline6" Text="{Binding DisplayName}" />
                                     <TextBlock FontSize="10" TextWrapping="Wrap" Text="{Binding GamePath}" />
                                     <StackPanel Orientation="Horizontal" Spacing="4">
-                                        <Button Command="{Binding OnClickInstall}" Content="Install" IsEnabled="{Binding IsReadyToInstall}" />
+                                        <Button Command="{Binding OnClickInstall}" IsEnabled="{Binding IsReadyToInstall}">
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                <TextBlock>
+                                                    Install
+                                                </TextBlock>
+                                                <TextBlock Text="{Binding $parent[Window].DataContext.Manifest.ModTitle}" />
+                                            </StackPanel>
+                                        </Button>
                                         <Button Command="{Binding OnClickStart}" Content="Start Game" IsEnabled="{Binding IsInstalled}" />
                                         <Button Command="{Binding OnClickUninstall}" Classes="Outline Accent" Content="Uninstall" IsEnabled="{Binding IsInstalled}" />
                                     </StackPanel>
@@ -40,9 +47,6 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <Button Command="{Binding OnClickInstall}" Content="Install" IsVisible="{Binding IsReadyToInstall}" />
-            <Button Command="{Binding OnClickStart}" Content="Start Game" IsVisible="{Binding IsInstalled}" />
-            <Button Classes="Outline Accent" Command="{Binding OnClickUninstall}" Content="Uninstall" IsVisible="{Binding IsInstalled}" />
         </StackPanel>
     </ScrollViewer>
 </Window>
