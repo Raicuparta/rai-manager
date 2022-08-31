@@ -17,7 +17,7 @@ public class EpicGameFinder : BaseFinder
 	public override string DisplayName => "Epic";
 	public override string Id => "epic";
 	
-	public EpicGameFinder(string gameExe, string epicGameId): base(gameExe, false)
+	public EpicGameFinder(string gameExe, bool requireAdmin, string epicGameId): base(gameExe, requireAdmin)
 	{
 		_epicGameId = epicGameId;
 	}

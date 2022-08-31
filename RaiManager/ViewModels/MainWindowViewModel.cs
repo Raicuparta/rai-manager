@@ -53,7 +53,6 @@ public class MainWindowViewModel : ViewModelBase
             {
                 this.RaiseAndSetIfChanged(ref _gameExePath, value);
             }
-            CheckIfInstalled();
             // WriteSettings();
         }
     }
@@ -98,8 +97,6 @@ public class MainWindowViewModel : ViewModelBase
             
         // TODO fetch details from manifest.
         GameFinders = Manifest.Providers.Select(BaseFinder.Create).ToList();
-            
-        CheckIfInstalled();
     }
 
     private async Task LoadSettings()
@@ -189,107 +186,5 @@ public class MainWindowViewModel : ViewModelBase
         if (manifest == null) throw new FileNotFoundException($"Failed to find manifest in {ManifestPath}");
 
         Manifest = manifest;
-    }
-
-    public async void OnClickInstall()
-    {
-        try
-        {
-
-            var gameDirectory = Path.GetDirectoryName(GameExePath);
-
-            if (gameDirectory == null)
-            {
-                throw new DirectoryNotFoundException($"Directory not found for path ${GameExePath}");
-            }
-                
-            var bepinexPath = Path.GetFullPath("./Mod/BepInEx");
-            await File.WriteAllTextAsync("./Mod/CopyToGame/doorstop_config.ini", $@"[UnityDoorstop]
-enabled=true
-targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
-
-            CopyFilesRecursively(new DirectoryInfo("./Mod/CopyToGame"), new DirectoryInfo(gameDirectory));
-
-            CheckIfInstalled();
-        }
-        catch (Exception exception)
-        {
-            StatusText = exception.Message;
-        }
-    }
-        
-    public void OnClickUninstall()
-    {
-        var gameDirectory = Path.GetDirectoryName(GameExePath);
-        File.Delete(Path.Join(gameDirectory, "doorstop_config.ini"));
-        File.Delete(Path.Join(gameDirectory, "winhttp.dll"));
-        CheckIfInstalled();
-    }
-
-    public void OnClickStart()
-    {
-        if (GameExePath == null)
-        {
-            return;
-        }
-
-        if (Manifest.RequireAdmin)
-        {
-            var process = new Process();
-            process.StartInfo.UseShellExecute = true;
-            process.StartInfo.Verb = "runas";
-            process.StartInfo.FileName = "cmd";
-            process.StartInfo.Arguments = $"/k \"{GameExePath}\" & exit";
-            process.Start();
-        }
-        else
-        {
-            Process.Start(GameExePath);
-        }
-    }
-
-    public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target) {
-        foreach (var dir in source.GetDirectories())
-        {
-            CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
-        }
-        foreach (var file in source.GetFiles())
-        {
-            File.Copy(file.FullName, Path.Combine(target.FullName, file.Name), true);
-        }
-    }
-        
-    private void CheckIfInstalled()
-    {
-        if (GameExePath == null)
-        {
-            var exeNames = GetPossibleExeNames();
-            
-            IsInstalled = false;
-            IsReadyToInstall = false;
-            StatusText = Manifest != null
-                ? $"Drag {string.Join(" or ", exeNames)} and drop it on this window to install {Manifest.ModTitle}.\n\nNote that this tool isn't compatible with the \"sandbox mode\" in the itch.io app."
-                : $"Startup failed. Files may be corrupted. Please note that this tool doesn't support the itch app sandbox mode, since it needs to modify system files.";
-
-            if (new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
-            {
-                StatusText +=
-                    "\n\nWarning: It seems like you are running this app with administrator privileges. This might make it impossible to drag & drop the game exe onto this window. Please close the app and restart it with normal privileges.";
-            }
-
-                
-            return;
-        }
-
-        var gameDirectory = Path.GetDirectoryName(GameExePath);
-        var doorstopConfigPath = Path.Join(gameDirectory, "doorstop_config.ini");
-        var winhttpPath = Path.Join(gameDirectory, "winhttp.dll");
-        // TODO: also check if doorstop config path is correct.
-        IsInstalled = File.Exists(winhttpPath) && File.Exists(doorstopConfigPath);
-        IsReadyToInstall = !IsInstalled;
-
-        StatusText = IsInstalled
-            ? $"Detected that {Manifest.ModTitle} is installed. You can start the game from here, or just run it normally (you don't need to run the game through here every time)."
-            : $"{Manifest.GameTitle} found in {GameExePath}";
     }
 }

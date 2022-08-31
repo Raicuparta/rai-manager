@@ -19,7 +19,7 @@ public class SteamGameFinder : BaseFinder
 
     private readonly string _steamGameFolder;
 
-    public SteamGameFinder(string gameExe, string steamGameFolder): base(gameExe, false)
+    public SteamGameFinder(string gameExe, bool requireAdmin, string steamGameFolder): base(gameExe, requireAdmin)
     {
         _steamGameFolder = steamGameFolder;
     }

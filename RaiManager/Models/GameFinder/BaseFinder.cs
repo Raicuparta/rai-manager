@@ -31,13 +31,14 @@ public abstract class BaseFinder
         var gameExe = providerManifest.GameExe;
         var gameIdentifier = providerManifest.GameIdentifier;
         var providerId = providerManifest.ProviderId;
+        var requireAdmin = providerManifest.RequireAdmin;
 
         BaseFinder gameFinder = providerId switch
         {
-            "steam" => new SteamGameFinder(gameExe, gameIdentifier),
-            "epic" => new EpicGameFinder(gameExe, gameIdentifier),
-            "gog" => new GogGameFinder(gameExe, gameIdentifier),
-            "xbox" => new UwpGameFinder(gameExe, gameIdentifier),
+            "steam" => new SteamGameFinder(gameExe, requireAdmin, gameIdentifier),
+            "epic" => new EpicGameFinder(gameExe, requireAdmin, gameIdentifier),
+            "gog" => new GogGameFinder(gameExe, requireAdmin, gameIdentifier),
+            "xbox" => new UwpGameFinder(gameExe, requireAdmin, gameIdentifier),
             _ => throw new ArgumentOutOfRangeException(nameof(providerManifest), providerId, null)
         };
         
@@ -116,6 +117,7 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
 
         if (_requireAdmin)
         {
+            // TODO handle case where user rejects. It throws an exception.
             var process = new Process();
             process.StartInfo.UseShellExecute = true;
             process.StartInfo.Verb = "runas";
