@@ -7,7 +7,7 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Xml;
 using Avalonia.Media.Imaging;
-using RaiManager.GameFinder;
+using RaiManager.Models.GameFinder;
 using ReactiveUI;
 
 namespace RaiManager.ViewModels;

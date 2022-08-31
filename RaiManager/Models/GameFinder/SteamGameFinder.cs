@@ -4,10 +4,12 @@ using System.Linq;
 using Gameloop.Vdf;
 using Microsoft.Win32;
 
-namespace RaiManager.GameFinder;
+namespace RaiManager.Models.GameFinder;
 
 public class SteamGameFinder : BaseFinder
 {
+    public override string Name => "Steam";
+
     private const string RegistryPath = @"SOFTWARE\Valve\Steam";
     private const string RegistryName = "SteamPath";
     private const string CommonPath = "steamapps/common";

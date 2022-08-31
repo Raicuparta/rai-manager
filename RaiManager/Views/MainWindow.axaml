@@ -3,6 +3,7 @@
         xmlns:vm="using:RaiManager.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300"
         Width="500"
         Height="400"
@@ -23,7 +24,13 @@
         <ItemsControl Items="{Binding GameFinders}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock FontSize="18" TextWrapping="Wrap" Text="{Binding GamePath}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <styles:Card MinWidth="240" VerticalAlignment="Top" Margin="0,4">
+                            <StackPanel Margin="4">
+                                <TextBlock Classes="Headline6" Text="{Binding Name}" />
+                                <TextBlock Classes="Body2" Text="{Binding GamePath}" />
+                                <!-- <TextBlock FontSize="18" TextWrapping="Wrap" Text="{Binding GamePath}" HorizontalAlignment="Center" VerticalAlignment="Center"/> -->
+                            </StackPanel>
+                        </styles:Card>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
