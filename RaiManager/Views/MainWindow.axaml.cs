@@ -3,26 +3,25 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using RaiManager.ViewModels;
 
-namespace RaiManager.Views
+namespace RaiManager.Views;
+
+public partial class MainWindow : Window
 {
-    public partial class MainWindow : Window
+    public MainWindow()
     {
-        public MainWindow()
-        {
-            InitializeComponent();
+        InitializeComponent();
             
-            AddHandler(DragDrop.DropEvent, Drop);
-        }
+        AddHandler(DragDrop.DropEvent, Drop);
+    }
 
-        private void Drop(object? sender, DragEventArgs dragEvent)
-        {
-            if (DataContext == null) return;
+    private void Drop(object? sender, DragEventArgs dragEvent)
+    {
+        if (DataContext == null) return;
 
-            var fileNames = dragEvent.Data.GetFileNames();
+        var fileNames = dragEvent.Data.GetFileNames();
 
-            if (fileNames == null) return;
+        if (fileNames == null) return;
 
-            ((MainWindowViewModel) DataContext).DropFiles(fileNames.ToList());
-        }
+        ((MainWindowViewModel) DataContext).DropFiles(fileNames.ToList());
     }
 }
