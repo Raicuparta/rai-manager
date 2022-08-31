@@ -14,7 +14,8 @@ public class EpicGameFinder : BaseFinder
 	private const string ManifestPattern = "*.item";
 	private readonly string _epicGameId;
 
-	public override string Name => "Epic";
+	public override string DisplayName => "Epic";
+	public override string Id => "epic";
 	
 	public EpicGameFinder(string gameExe, string epicGameId): base(gameExe)
 	{

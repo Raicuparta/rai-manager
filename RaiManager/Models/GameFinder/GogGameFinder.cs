@@ -4,7 +4,8 @@ namespace RaiManager.Models.GameFinder;
 
 public class GogGameFinder: BaseFinder
 {
-    public override string Name => "GOG";
+    public override string DisplayName => "GOG";
+    public override string Id => "gog";
     
     private const string RegistryPath = @"SOFTWARE\WOW6432Node\GOG.com\Games";
 

@@ -7,7 +7,9 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Xml;
 using Avalonia.Media.Imaging;
+using Newtonsoft.Json;
 using RaiManager.Models.GameFinder;
+using RaiManager.Models.Manifest;
 using ReactiveUI;
 
 namespace RaiManager.ViewModels;
@@ -15,7 +17,7 @@ namespace RaiManager.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     private const string IconPath = "./Mod/icon.png";
-    private const string ManifestPath = "./Mod/manifest.xml";
+    private const string ManifestPath = "./Mod/manifest.json";
     private Bitmap? _icon;
     public Bitmap? Icon
     {
@@ -52,7 +54,7 @@ public class MainWindowViewModel : ViewModelBase
                 this.RaiseAndSetIfChanged(ref _gameExePath, value);
             }
             CheckIfInstalled();
-            WriteSettings();
+            // WriteSettings();
         }
     }
 
@@ -124,39 +126,39 @@ public class MainWindowViewModel : ViewModelBase
 
     private async Task LoadSettings()
     {
-        var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
-        var modDataPath = Path.Join(managerDataPath, _modId);
-        var settingsDocument = await ReadXmlDocument(Path.Join(modDataPath, "settings.xml"));
-        var settingsGameExePath = GetXmlProperty(settingsDocument, "/settings/gameExePath");
-        if (settingsGameExePath != null)
-        {
-            GameExePath = settingsGameExePath;
-        }
+        // var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
+        // var modDataPath = Path.Join(managerDataPath, _modId);
+        // var settingsDocument = await ReadManifest(Path.Join(modDataPath, "settings.xml"));
+        // var settingsGameExePath = GetXmlProperty(settingsDocument, "/settings/gameExePath");
+        // if (settingsGameExePath != null)
+        // {
+        //     GameExePath = settingsGameExePath;
+        // }
     }
         
-    private async void WriteSettings()
-    {
-        if (GameExePath == null || _modId == null) return;
-            
-        var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
-        var modDataPath = Path.Join(managerDataPath, _modId);
-        var settingsPath = Path.Join(modDataPath, "settings.xml");
-        var settingsDocument = await ReadXmlDocument(settingsPath) ?? new XmlDocument();
-
-        var gameExeNode = settingsDocument.SelectSingleNode("/settings/gameExePath");
-
-        if (gameExeNode == null)
-        {
-            settingsDocument.LoadXml($"<settings><gameExePath>{GameExePath}</gameExePath></settings>");
-        }
-        else
-        {
-            gameExeNode.InnerText = GameExePath;
-        }
-
-        Directory.CreateDirectory(modDataPath);
-        settingsDocument.Save(settingsPath);
-    }
+    // private async void WriteSettings()
+    // {
+    //     if (GameExePath == null || _modId == null) return;
+    //         
+    //     var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
+    //     var modDataPath = Path.Join(managerDataPath, _modId);
+    //     var settingsPath = Path.Join(modDataPath, "settings.xml");
+    //     var settingsDocument = await ReadManifest(settingsPath) ?? new XmlDocument();
+    //
+    //     var gameExeNode = settingsDocument.SelectSingleNode("/settings/gameExePath");
+    //
+    //     if (gameExeNode == null)
+    //     {
+    //         settingsDocument.LoadXml($"<settings><gameExePath>{GameExePath}</gameExePath></settings>");
+    //     }
+    //     else
+    //     {
+    //         gameExeNode.InnerText = GameExePath;
+    //     }
+    //
+    //     Directory.CreateDirectory(modDataPath);
+    //     settingsDocument.Save(settingsPath);
+    // }
 
     public void DropFiles(List<string> files)
     {
@@ -185,29 +187,27 @@ public class MainWindowViewModel : ViewModelBase
         return document?.SelectSingleNode(path)?.InnerText;
     }
 
-    private async Task<XmlDocument?> ReadXmlDocument(string path)
+    private async Task<Manifest?> ReadManifest(string path)
     {
         if (!File.Exists(path))
         {
             return null;
         }
-        var text = await File.ReadAllTextAsync(path);
-        var document = new XmlDocument();
-        document.LoadXml(text);
-        return document;
+
+        return await Task.Run(() => JsonConvert.DeserializeObject<Manifest>(File.ReadAllText(path)));
     }
         
     private async Task LoadManifest()
     {
-        var document = await ReadXmlDocument(ManifestPath);
+        var manifest = await ReadManifest(ManifestPath);
 
-        if (document == null) throw new FileNotFoundException($"Failed to find manifest in {ManifestPath}");
+        if (manifest == null) throw new FileNotFoundException($"Failed to find manifest in {ManifestPath}");
 
-        ModTitle = GetManifestProperty(document, "modTitle");
-        _modId = GetManifestProperty(document, "id");
-        GameTitle = GetManifestProperty(document, "gameTitle");
-        GameExe = GetManifestProperty(document, "gameExe");
-        _requireAdmin = GetManifestProperty(document, "requireAdmin").Equals("true", StringComparison.OrdinalIgnoreCase);
+        ModTitle = manifest.ModTitle;
+        _modId = manifest.Id;
+        GameTitle = manifest.GameTitle;
+        GameExe = manifest.Providers[0].GameExe;
+        _requireAdmin = manifest.RequireAdmin;
     }
 
     public async void OnClickInstall()

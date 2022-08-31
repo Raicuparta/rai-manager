@@ -26,7 +26,7 @@
                 <DataTemplate>
                         <styles:Card MinWidth="240" VerticalAlignment="Top" Margin="0,4">
                             <StackPanel Margin="4">
-                                <TextBlock Classes="Headline6" Text="{Binding Name}" />
+                                <TextBlock Classes="Headline6" Text="{Binding DisplayName}" />
                                 <TextBlock Classes="Body2" Text="{Binding GamePath}" />
                                 <!-- <TextBlock FontSize="18" TextWrapping="Wrap" Text="{Binding GamePath}" HorizontalAlignment="Center" VerticalAlignment="Center"/> -->
                             </StackPanel>

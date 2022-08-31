@@ -5,7 +5,8 @@ namespace RaiManager.Models.GameFinder;
 public abstract class BaseFinder
 {
     public string? GamePath => FindGamePath();
-    public abstract string Name { get; }
+    public abstract string DisplayName { get; }
+    public abstract string Id { get; }
 
     protected readonly string GameExe;
 
