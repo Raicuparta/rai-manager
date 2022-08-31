@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300"
-        Width="500"
-        Height="400"
-        MinWidth="500"
-        MinHeight="400"
+        Width="550"
+        Height="450"
+        MinWidth="550"
+        MinHeight="450"
         x:Class="RaiManager.Views.MainWindow"
         Icon="/Assets/icon.ico"
         Title="Rai Manager"
@@ -25,7 +25,7 @@
             <ItemsControl Items="{Binding GameProviders}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                            <styles:Card MinWidth="240" VerticalAlignment="Top" Margin="0,4" IsVisible="{Binding IsAvailable}">
+                            <styles:Card VerticalAlignment="Top" Margin="0,4" IsVisible="{Binding IsAvailable}">
                                 <StackPanel Margin="4" Spacing="4">
                                     <TextBlock Classes="Headline6" Text="{Binding DisplayName}" />
                                     <TextBlock FontSize="10" TextWrapping="Wrap" Text="{Binding GamePath}" />
