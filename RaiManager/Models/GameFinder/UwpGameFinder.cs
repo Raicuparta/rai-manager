@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using Microsoft.Win32;
 
 namespace RaiManager.Models.GameFinder;
@@ -37,7 +38,7 @@ public class UwpGameFinder : BaseFinder
 
         if (IsValidGamePath(gamePath))
         {
-            return gamePath;
+            return Path.Join(gamePath, GameExe);
         }
 
         Debug.WriteLine("Game not found in UWP.");
