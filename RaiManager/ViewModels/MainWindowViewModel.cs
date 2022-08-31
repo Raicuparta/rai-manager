@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
 using Avalonia.Media.Imaging;
-using Newtonsoft.Json;
 using RaiManager.Models.GameFinder;
 using RaiManager.Models.Manifest;
 using RaiManager.Models.Settings;
@@ -17,7 +13,6 @@ namespace RaiManager.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     private const string IconPath = "./Mod/icon.png";
-    private const string ManifestPath = "./Mod/manifest.json";
     private Bitmap? _icon;
     public Bitmap? Icon
     {
@@ -39,8 +34,8 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _gameFinders, value);
     }
 
-    private Manifest? _manifest;
-    public Manifest? Manifest
+    private AppManifest? _manifest;
+    public AppManifest? Manifest
     {
         get => _manifest;
         private set => this.RaiseAndSetIfChanged(ref _manifest, value);
@@ -59,33 +54,12 @@ public class MainWindowViewModel : ViewModelBase
             
         _manualGameFinder = new ManualGameFinder("", false);
 
-        await LoadManifest();
-        await LoadSettings();
-            
+        Manifest = await AppManifest.LoadManifest();
+        await AppSettings.LoadSettings(Manifest, _manualGameFinder);
+
         var gameFinders = Manifest.Providers.Select(BaseFinder.Create).ToList();
         gameFinders.Insert(0, _manualGameFinder);
         GameFinders = gameFinders;
-    }
-
-    private async Task LoadSettings()
-    {
-        var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
-        Debug.WriteLine($"Lets se....");
-        Debug.WriteLine($"Lets se.... {Manifest.Id}");
-        var modDataPath = Path.Join(managerDataPath, Manifest.Id);
-        var settingsDocument = await ReadJson<AppSettings>(Path.Join(modDataPath, "settings.json"));
-
-        if (settingsDocument == null)
-        {
-            Debug.WriteLine($"No settings file found in {Path.Join(modDataPath, "settings.json")}");
-            return;
-        }
-        
-        settingsDocument.Paths.TryGetValue("manual", out var manualPath);
-
-        if (string.IsNullOrEmpty(manualPath)) return;
-        
-        _manualGameFinder.SetGamePath(manualPath);
     }
         
     // private async void WriteSettings()
@@ -112,13 +86,10 @@ public class MainWindowViewModel : ViewModelBase
     //     settingsDocument.Save(settingsPath);
     // }
 
-    private IEnumerable<string> GetPossibleExeNames()
-    {
-        return Manifest.Providers.Select(provider => provider.GameExe).Distinct();
-    }
-
     public void DropFiles(List<string> files)
     {
+        if (_manualGameFinder == null) return;
+        
         var firstExe = files.FirstOrDefault(file => Path.GetExtension(file) == ".exe");
 
         if (firstExe == null)
@@ -135,34 +106,5 @@ public class MainWindowViewModel : ViewModelBase
         {
             Icon = await Task.Run(() => Bitmap.DecodeToWidth(File.OpenRead(IconPath), 400));
         }
-    }
-
-    private string GetManifestProperty(XmlDocument? document, string propertyName)
-    {
-        return GetXmlProperty(document, $"/manifest/{propertyName}") ?? $"[MISSING {propertyName}]";
-    }
-        
-    private string? GetXmlProperty(XmlDocument? document, string path)
-    {
-        return document?.SelectSingleNode(path)?.InnerText;
-    }
-
-    private async Task<TObject?> ReadJson<TObject>(string path) where TObject: class
-    {
-        if (!File.Exists(path))
-        {
-            return null;
-        }
-
-        return await Task.Run(() => JsonConvert.DeserializeObject<TObject>(File.ReadAllText(path)));
-    }
-        
-    private async Task LoadManifest()
-    {
-        var manifest = await ReadJson<Manifest>(ManifestPath);
-
-        if (manifest == null) throw new FileNotFoundException($"Failed to find manifest in {ManifestPath}");
-
-        Manifest = manifest;
     }
 }
