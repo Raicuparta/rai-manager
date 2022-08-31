@@ -74,7 +74,7 @@ public class SteamGameFinder : BaseFinder
             }
         }
 
-        Debug.WriteLine("Game not found in Steam.");
+        Debug.WriteLine($"Game not found in Steam. gameExe: {GameExe}. _steamGameFolder: {_steamGameFolder}");
         return "Game not found in Steam.";
     }
 }

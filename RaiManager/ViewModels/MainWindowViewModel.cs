@@ -58,28 +58,12 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private string _gameTitle = "";
-    public string GameTitle
+    private Manifest? _manifest;
+    public Manifest? Manifest
     {
-        get => _gameTitle;
-        private set => this.RaiseAndSetIfChanged(ref _gameTitle, value);
+        get => _manifest;
+        private set => this.RaiseAndSetIfChanged(ref _manifest, value);
     }
-
-    private string _modTitle = "";
-    public string ModTitle
-    {
-        get => _modTitle;
-        private set => this.RaiseAndSetIfChanged(ref _modTitle, value);
-    }
-
-    private string _gameExe = "";
-    public string GameExe
-    {
-        get => _gameExe;
-        private set => this.RaiseAndSetIfChanged(ref _gameExe, value);
-    }
-
-    private bool _requireAdmin;
         
     private bool _isInstalled;
     public bool IsInstalled
@@ -113,13 +97,7 @@ public class MainWindowViewModel : ViewModelBase
         await LoadSettings();
             
         // TODO fetch details from manifest.
-        GameFinders = new List<BaseFinder>()
-        {
-            new SteamGameFinder(GameExe, GameTitle),
-            new UwpGameFinder("Firewatch.exe", "Firewatch"),
-            new GogGameFinder("Firewatch.exe", "1459256379"),
-            new EpicGameFinder("AShortHike.exe", "018230f620e34503926e5c76525a8fd1")
-        };
+        GameFinders = Manifest.Providers.Select(BaseFinder.Create).ToList();
             
         CheckIfInstalled();
     }
@@ -160,12 +138,19 @@ public class MainWindowViewModel : ViewModelBase
     //     settingsDocument.Save(settingsPath);
     // }
 
+    private IEnumerable<string> GetPossibleExeNames()
+    {
+        return Manifest.Providers.Select(provider => provider.GameExe).Distinct();
+    }
+
     public void DropFiles(List<string> files)
     {
-        GameExePath = files.FirstOrDefault(file => Path.GetFileName(file) == _gameExe);
+        var exeNames = GetPossibleExeNames();
+        
+        GameExePath = files.FirstOrDefault(file => exeNames.Contains(Path.GetFileName(file)));
         if (GameExePath == null)
         {
-            StatusText = $"Wrong file. Drag {GameExe} and drop it on this window to install {ModTitle}";
+            StatusText = $"Wrong file. Drag {string.Join(" or ", exeNames)} and drop it on this window to install {Manifest.ModTitle}";
         }
     }
         
@@ -203,11 +188,7 @@ public class MainWindowViewModel : ViewModelBase
 
         if (manifest == null) throw new FileNotFoundException($"Failed to find manifest in {ManifestPath}");
 
-        ModTitle = manifest.ModTitle;
-        _modId = manifest.Id;
-        GameTitle = manifest.GameTitle;
-        GameExe = manifest.Providers[0].GameExe;
-        _requireAdmin = manifest.RequireAdmin;
+        Manifest = manifest;
     }
 
     public async void OnClickInstall()
@@ -252,7 +233,7 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
             return;
         }
 
-        if (_requireAdmin)
+        if (Manifest.RequireAdmin)
         {
             var process = new Process();
             process.StartInfo.UseShellExecute = true;
@@ -282,10 +263,12 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
     {
         if (GameExePath == null)
         {
+            var exeNames = GetPossibleExeNames();
+            
             IsInstalled = false;
             IsReadyToInstall = false;
-            StatusText = GameExe.Length > 0
-                ? $"Drag {GameExe} and drop it on this window to install {ModTitle}.\n\nNote that this tool isn't compatible with the \"sandbox mode\" in the itch.io app."
+            StatusText = Manifest != null
+                ? $"Drag {string.Join(" or ", exeNames)} and drop it on this window to install {Manifest.ModTitle}.\n\nNote that this tool isn't compatible with the \"sandbox mode\" in the itch.io app."
                 : $"Startup failed. Files may be corrupted. Please note that this tool doesn't support the itch app sandbox mode, since it needs to modify system files.";
 
             if (new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
@@ -306,7 +289,7 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
         IsReadyToInstall = !IsInstalled;
 
         StatusText = IsInstalled
-            ? $"Detected that {ModTitle} is installed. You can start the game from here, or just run it normally (you don't need to run the game through here every time)."
-            : $"{GameTitle} found in {GameExePath}";
+            ? $"Detected that {Manifest.ModTitle} is installed. You can start the game from here, or just run it normally (you don't need to run the game through here every time)."
+            : $"{Manifest.GameTitle} found in {GameExePath}";
     }
 }

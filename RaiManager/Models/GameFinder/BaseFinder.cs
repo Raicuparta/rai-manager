@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using RaiManager.Models.Manifest;
 
 namespace RaiManager.Models.GameFinder;
 
@@ -13,6 +15,22 @@ public abstract class BaseFinder
     protected BaseFinder(string gameExe)
     {
         GameExe = gameExe;
+    }
+    
+    public static BaseFinder Create(ProviderManifest providerManifest)
+    {
+        var gameExe = providerManifest.GameExe;
+        var gameIdentifier = providerManifest.GameIdentifier;
+        var providerId = providerManifest.ProviderId;
+
+        return providerId switch
+        {
+            "steam" => new SteamGameFinder(gameExe, gameIdentifier),
+            "epic" => new EpicGameFinder(gameExe, gameIdentifier),
+            "gog" => new GogGameFinder(gameExe, gameIdentifier),
+            "xbox" => new UwpGameFinder(gameExe, gameIdentifier),
+            _ => throw new ArgumentOutOfRangeException(nameof(providerManifest), providerId, null)
+        };
     }
 
     public abstract string? FindGamePath();
