@@ -25,4 +25,12 @@ public class ProviderManifest
     /// </summary>
     [JsonProperty("gameExe")]
     public string GameExe {get; protected set;}
+
+    /// <summary>
+    /// If true, will run the game with admin privileges.
+    /// This can be required if the mod tries to patch game files for UWP (Xbox / Game Pass) games.
+    /// If the mod is able to run without modifying any game files, this shouldn't be needed.
+    /// </summary>
+    [JsonProperty("requireAdmin")]
+    public bool RequireAdmin {get; protected set;}
 }

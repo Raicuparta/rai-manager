@@ -14,9 +14,6 @@ public class Manifest
     [JsonProperty("gameTitle")]
     public string GameTitle {get; protected set;}
 
-    [JsonProperty("requireAdmin")]
-    public bool RequireAdmin {get; protected set;}
-
     [JsonProperty("providers")]
     public ProviderManifest[] Providers {get; protected set;}
 }
