@@ -63,7 +63,7 @@ public class MainWindowViewModel : ViewModelBase
         gameProviders.Insert(0, _manualProvider);
         GameProviders = gameProviders;
 
-        StatusText = $"Tried to find {Manifest.GameTitle} on {manifestProviderNames}. If no paths can be found, drag the game exe and drop it on this window.";
+        StatusText = $"Tried to find {Manifest.GameTitle} on the supported providers ({manifestProviderNames}). If the game can't be found automatically, drag the game exe and drop it on this window.";
     }
 
     public void DropFiles(List<string> files)
