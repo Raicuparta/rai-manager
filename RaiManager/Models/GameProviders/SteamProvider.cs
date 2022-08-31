@@ -4,9 +4,9 @@ using System.Linq;
 using Gameloop.Vdf;
 using Microsoft.Win32;
 
-namespace RaiManager.Models.GameFinder;
+namespace RaiManager.Models.GameProviders;
 
-public class SteamGameFinder : BaseFinder
+public class SteamProvider : GameProvider
 {
     public override string DisplayName => "Steam";
     public override string Id => "steam";
@@ -19,7 +19,7 @@ public class SteamGameFinder : BaseFinder
 
     private readonly string _steamGameFolder;
 
-    public SteamGameFinder(string gameExe, bool requireAdmin, string steamGameFolder): base(gameExe, requireAdmin)
+    public SteamProvider(string gameExe, bool requireAdmin, string steamGameFolder): base(gameExe, requireAdmin)
     {
         _steamGameFolder = steamGameFolder;
         Initialize();

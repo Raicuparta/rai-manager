@@ -4,9 +4,9 @@ using System.IO;
 using RaiManager.Models.Manifest;
 using ReactiveUI;
 
-namespace RaiManager.Models.GameFinder;
+namespace RaiManager.Models.GameProviders;
 
-public abstract class BaseFinder: ReactiveObject
+public abstract class GameProvider: ReactiveObject
 {
     public abstract string DisplayName { get; }
     public abstract string Id { get; }
@@ -45,29 +45,29 @@ public abstract class BaseFinder: ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _gameExe, value);
     }
 
-    protected BaseFinder(string gameExe, bool requireAdmin)
+    protected GameProvider(string gameExe, bool requireAdmin)
     {
         GameExe = gameExe;
         _requireAdmin = requireAdmin;
     }
     
-    public static BaseFinder Create(ProviderManifest providerManifest)
+    public static GameProvider Create(ProviderManifest providerManifest)
     {
         var gameExe = providerManifest.GameExe;
         var gameIdentifier = providerManifest.GameIdentifier;
         var providerId = providerManifest.ProviderId;
         var requireAdmin = providerManifest.RequireAdmin;
 
-        BaseFinder gameFinder = providerId switch
+        GameProvider gameProvider = providerId switch
         {
-            "steam" => new SteamGameFinder(gameExe, requireAdmin, gameIdentifier),
-            "epic" => new EpicGameFinder(gameExe, requireAdmin, gameIdentifier),
-            "gog" => new GogGameFinder(gameExe, requireAdmin, gameIdentifier),
-            "xbox" => new UwpGameFinder(gameExe, requireAdmin, gameIdentifier),
+            "steam" => new SteamProvider(gameExe, requireAdmin, gameIdentifier),
+            "epic" => new EpicProvider(gameExe, requireAdmin, gameIdentifier),
+            "gog" => new GogProvider(gameExe, requireAdmin, gameIdentifier),
+            "xbox" => new XboxProvider(gameExe, requireAdmin, gameIdentifier),
             _ => throw new ArgumentOutOfRangeException(nameof(providerManifest), providerId, null)
         };
         
-        return gameFinder;
+        return gameProvider;
     }
 
     protected void Initialize()

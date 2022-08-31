@@ -1,8 +1,8 @@
 ﻿using Microsoft.Win32;
 
-namespace RaiManager.Models.GameFinder;
+namespace RaiManager.Models.GameProviders;
 
-public class GogGameFinder: BaseFinder
+public class GogProvider: GameProvider
 {
     public override string DisplayName => "GOG";
     public override string Id => "gog";
@@ -11,7 +11,7 @@ public class GogGameFinder: BaseFinder
 
     private readonly string _gogId;
     
-    public GogGameFinder(string gameExe, bool requireAdmin, string gogId) : base(gameExe, requireAdmin)
+    public GogProvider(string gameExe, bool requireAdmin, string gogId) : base(gameExe, requireAdmin)
     {
         _gogId = gogId;
         Initialize();

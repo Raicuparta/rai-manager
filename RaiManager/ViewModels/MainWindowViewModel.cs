@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using Avalonia.Media.Imaging;
 using Newtonsoft.Json;
-using RaiManager.Models.GameFinder;
+using RaiManager.Models.GameProviders;
 using RaiManager.Models.Manifest;
 using RaiManager.Models.Settings;
 using ReactiveUI;
@@ -30,11 +30,11 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _statusText, value);
     }
 
-    private List<BaseFinder> _gameFinders = new();
-    public List<BaseFinder> GameFinders
+    private List<GameProvider> _gameProviders = new();
+    public List<GameProvider> GameProviders
     {
-        get => _gameFinders;
-        set => this.RaiseAndSetIfChanged(ref _gameFinders, value);
+        get => _gameProviders;
+        set => this.RaiseAndSetIfChanged(ref _gameProviders, value);
     }
 
     private AppManifest? _manifest;
@@ -44,7 +44,7 @@ public class MainWindowViewModel : ViewModelBase
         private set => this.RaiseAndSetIfChanged(ref _manifest, value);
     }
 
-    private ManualGameFinder? _manualGameFinder;
+    private ManualProvider? _manualProvider;
     private AppSettings? _appSettings;
 
     public MainWindowViewModel()
@@ -56,19 +56,19 @@ public class MainWindowViewModel : ViewModelBase
     {
         LoadIcon();
             
-        _manualGameFinder = new ManualGameFinder("", false);
+        _manualProvider = new ManualProvider("", false);
 
         Manifest = await AppManifest.LoadManifest();
-        _appSettings = await AppSettings.LoadSettings(Manifest, _manualGameFinder);
+        _appSettings = await AppSettings.LoadSettings(Manifest, _manualProvider);
 
-        var gameFinders = Manifest.Providers.Select(BaseFinder.Create).ToList();
-        gameFinders.Insert(0, _manualGameFinder);
-        GameFinders = gameFinders;
+        var gameProviders = Manifest.Providers.Select(GameProvider.Create).ToList();
+        gameProviders.Insert(0, _manualProvider);
+        GameProviders = gameProviders;
     }
 
     public void DropFiles(List<string> files)
     {
-        if (_manualGameFinder == null || Manifest == null) return;
+        if (_manualProvider == null || Manifest == null) return;
         
         var firstExePath = files.FirstOrDefault(file => Path.GetExtension(file) == ".exe");
 
@@ -77,7 +77,7 @@ public class MainWindowViewModel : ViewModelBase
             throw new FileNotFoundException("None of the files dropped have the exe extension");
         }
         
-        _manualGameFinder.SetGamePath(firstExePath);
+        _manualProvider.SetGamePath(firstExePath);
         
         AppSettings.WriteSettings(_appSettings, firstExePath, Manifest);
     }

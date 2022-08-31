@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace RaiManager.Models.GameFinder;
+namespace RaiManager.Models.GameProviders;
 
 public class EpicManifest
 {

@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using Microsoft.Win32;
 
-namespace RaiManager.Models.GameFinder;
+namespace RaiManager.Models.GameProviders;
 
-public class UwpGameFinder : BaseFinder
+public class XboxProvider : GameProvider
 {
     public override string DisplayName => "Xbox / Game Pass";
     public override string Id => "xbox";
@@ -13,7 +13,7 @@ public class UwpGameFinder : BaseFinder
     private const string RegistryPath = @"Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages";
     private readonly string _uwpDisplayName;
 
-    public UwpGameFinder(string gameExe, bool requireAdmin, string uwpDisplayName): base(gameExe, requireAdmin)
+    public XboxProvider(string gameExe, bool requireAdmin, string uwpDisplayName): base(gameExe, requireAdmin)
     {
         _uwpDisplayName = uwpDisplayName;
         Initialize();

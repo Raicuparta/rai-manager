@@ -1,14 +1,14 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace RaiManager.Models.GameFinder;
+namespace RaiManager.Models.GameProviders;
 
-public class ManualGameFinder: BaseFinder
+public class ManualProvider: GameProvider
 {
     public override string DisplayName => "Manual";
     public override string Id => "manual";
 
-    public ManualGameFinder(string gameExe, bool requireAdmin) : base(gameExe, requireAdmin)
+    public ManualProvider(string gameExe, bool requireAdmin) : base(gameExe, requireAdmin)
     {
         Initialize();
     }
