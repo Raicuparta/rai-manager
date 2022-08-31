@@ -9,12 +9,14 @@ public abstract class BaseFinder
 {
     public abstract string DisplayName { get; }
     public abstract string Id { get; }
-    
-    public string? GamePath => FindGamePath();
+
+    private string? _gamePath;
+    public string? GamePath => _gamePath ??= FindGamePath();
+
     public bool IsInstalled { get; private set; }
     public bool IsReadyToInstall { get; private set; }
 
-    private bool _requireAdmin;
+    private readonly bool _requireAdmin;
 
     protected readonly string GameExe;
 

@@ -31,20 +31,20 @@ public class SteamGameFinder : BaseFinder
         if (string.IsNullOrEmpty(steamPath))
         {
             Debug.WriteLine("Steam not found in Registry.");
-            return "Steam not found in Registry.";
+            return null;
         }
 
         var defaultLocation = $"{steamPath}/{CommonPath}/{_steamGameFolder}";
         if (IsValidGamePath(defaultLocation))
         {
-            return defaultLocation;
+            return  Path.Join(defaultLocation, GameExe);
         }
 
         var libraryFoldersFile = $"{steamPath}/{LibraryFoldersPath}";
         if (!File.Exists(libraryFoldersFile))
         {
             Debug.WriteLine($"Steam library folders file not found: {libraryFoldersFile}");
-            return "Steam library folders file not found: {libraryFoldersFile}";
+            return null;
         }
 
         var libraryFoldersContent = File.ReadAllText(libraryFoldersFile);
@@ -70,11 +70,11 @@ public class SteamGameFinder : BaseFinder
             var gamePath = $"{libraryPath}/{CommonPath}/{_steamGameFolder}";
             if (IsValidGamePath(gamePath))
             {
-                return gamePath;
+                return Path.Join(gamePath, GameExe);
             }
         }
 
         Debug.WriteLine($"Game not found in Steam. gameExe: {GameExe}. _steamGameFolder: {_steamGameFolder}");
-        return "Game not found in Steam.";
+        return null;
     }
 }
