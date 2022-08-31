@@ -8,7 +8,8 @@ namespace RaiManager.Models.GameFinder;
 
 public class SteamGameFinder : BaseFinder
 {
-    public override string Name => "Steam";
+    public override string DisplayName => "Steam";
+    public override string Id => "steam";
 
     private const string RegistryPath = @"SOFTWARE\Valve\Steam";
     private const string RegistryName = "SteamPath";
