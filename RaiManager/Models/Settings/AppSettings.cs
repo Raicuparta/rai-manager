@@ -12,6 +12,8 @@ namespace RaiManager.Models.Settings;
 [JsonObject(MemberSerialization.OptIn)]
 public class AppSettings
 {
+    private const string SettingsFileName = "settings.json";
+    
     /// <summary>
     /// Dictionary where keys are the <see cref="GameFinder.BaseFinder.Id"/> property of a class that extends
     /// <see cref="GameFinder.BaseFinder"/>, and the values are the full paths to the game's exe in that provider.
@@ -19,24 +21,40 @@ public class AppSettings
     [JsonProperty("paths")]
     public Dictionary<string, string> Paths {get; protected set;}
     
-    public static async Task LoadSettings(AppManifest appManifest, ManualGameFinder manualGameFinder)
+    public static async Task<AppSettings?> LoadSettings(AppManifest appManifest, ManualGameFinder manualGameFinder)
     {
         var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
         Debug.WriteLine($"Lets se....");
         Debug.WriteLine($"Lets se.... {appManifest.Id}");
         var modDataPath = Path.Join(managerDataPath, appManifest.Id);
-        var settingsDocument = await JsonHelper.Read<AppSettings>(Path.Join(modDataPath, "settings.json"));
+        var appSettings = await JsonHelper.Read<AppSettings>(Path.Join(modDataPath, SettingsFileName));
 
-        if (settingsDocument == null)
+        if (appSettings == null)
         {
-            Debug.WriteLine($"No settings file found in {Path.Join(modDataPath, "settings.json")}");
-            return;
+            Debug.WriteLine($"No settings file found in {Path.Join(modDataPath, SettingsFileName)}");
+            return null;
         }
         
-        settingsDocument.Paths.TryGetValue("manual", out var manualPath);
+        appSettings.Paths.TryGetValue("manual", out var manualPath);
 
-        if (string.IsNullOrEmpty(manualPath)) return;
+        if (string.IsNullOrEmpty(manualPath)) return null;
         
         manualGameFinder.SetGamePath(manualPath);
+
+        return appSettings;
+    }
+    
+    public static async void WriteSettings(AppSettings? baseSettings, string manualGamePath, AppManifest manifest)
+    {
+        var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
+        var modDataPath = Path.Join(managerDataPath, manifest.Id);
+        var settingsPath = Path.Join(modDataPath, SettingsFileName);
+        var settingsDocument = baseSettings ?? new AppSettings();
+
+        settingsDocument.Paths["manual"] = manualGamePath;
+        
+        Directory.CreateDirectory(modDataPath);
+        
+        await File.WriteAllTextAsync(settingsPath, JsonConvert.SerializeObject(settingsDocument, Formatting.Indented));
     }
 }

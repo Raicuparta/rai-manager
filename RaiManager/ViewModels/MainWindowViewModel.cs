@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using Avalonia.Media.Imaging;
+using Newtonsoft.Json;
 using RaiManager.Models.GameFinder;
 using RaiManager.Models.Manifest;
 using RaiManager.Models.Settings;
@@ -42,6 +45,7 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     private ManualGameFinder? _manualGameFinder;
+    private AppSettings? _appSettings;
 
     public MainWindowViewModel()
     {
@@ -55,49 +59,27 @@ public class MainWindowViewModel : ViewModelBase
         _manualGameFinder = new ManualGameFinder("", false);
 
         Manifest = await AppManifest.LoadManifest();
-        await AppSettings.LoadSettings(Manifest, _manualGameFinder);
+        _appSettings = await AppSettings.LoadSettings(Manifest, _manualGameFinder);
 
         var gameFinders = Manifest.Providers.Select(BaseFinder.Create).ToList();
         gameFinders.Insert(0, _manualGameFinder);
         GameFinders = gameFinders;
     }
-        
-    // private async void WriteSettings()
-    // {
-    //     if (GameExePath == null || _modId == null) return;
-    //         
-    //     var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
-    //     var modDataPath = Path.Join(managerDataPath, _modId);
-    //     var settingsPath = Path.Join(modDataPath, "settings.xml");
-    //     var settingsDocument = await ReadManifest(settingsPath) ?? new XmlDocument();
-    //
-    //     var gameExeNode = settingsDocument.SelectSingleNode("/settings/gameExePath");
-    //
-    //     if (gameExeNode == null)
-    //     {
-    //         settingsDocument.LoadXml($"<settings><gameExePath>{GameExePath}</gameExePath></settings>");
-    //     }
-    //     else
-    //     {
-    //         gameExeNode.InnerText = GameExePath;
-    //     }
-    //
-    //     Directory.CreateDirectory(modDataPath);
-    //     settingsDocument.Save(settingsPath);
-    // }
 
     public void DropFiles(List<string> files)
     {
-        if (_manualGameFinder == null) return;
+        if (_manualGameFinder == null || Manifest == null) return;
         
-        var firstExe = files.FirstOrDefault(file => Path.GetExtension(file) == ".exe");
+        var firstExePath = files.FirstOrDefault(file => Path.GetExtension(file) == ".exe");
 
-        if (firstExe == null)
+        if (firstExePath == null)
         {
             throw new FileNotFoundException("None of the files dropped have the exe extension");
         }
         
-        _manualGameFinder.SetGamePath(firstExe);
+        _manualGameFinder.SetGamePath(firstExePath);
+        
+        AppSettings.WriteSettings(_appSettings, firstExePath, Manifest);
     }
         
     private async void LoadIcon()
