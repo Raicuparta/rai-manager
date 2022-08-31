@@ -12,7 +12,7 @@ public class UwpGameFinder : BaseFinder
     private const string RegistryPath = @"Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages";
     private readonly string _uwpDisplayName;
 
-    public UwpGameFinder(string gameExe, string uwpDisplayName): base(gameExe)
+    public UwpGameFinder(string gameExe, string uwpDisplayName): base(gameExe, true)
     {
         _uwpDisplayName = uwpDisplayName;
     }

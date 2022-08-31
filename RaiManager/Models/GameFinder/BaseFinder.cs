@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using RaiManager.Models.Manifest;
 
@@ -13,11 +14,14 @@ public abstract class BaseFinder
     public bool IsInstalled { get; private set; }
     public bool IsReadyToInstall { get; private set; }
 
+    private bool _requireAdmin;
+
     protected readonly string GameExe;
 
-    protected BaseFinder(string gameExe)
+    protected BaseFinder(string gameExe, bool requireAdmin)
     {
         GameExe = gameExe;
+        _requireAdmin = requireAdmin;
     }
     
     public static BaseFinder Create(ProviderManifest providerManifest)
@@ -99,5 +103,35 @@ targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
         // TODO: also check if doorstop config path is correct.
         IsInstalled = File.Exists(winhttpPath) && File.Exists(doorstopConfigPath);
         IsReadyToInstall = !IsInstalled;
+    }
+    
+    public void OnClickStart()
+    {
+        if (GamePath == null)
+        {
+            return;
+        }
+
+        if (_requireAdmin)
+        {
+            var process = new Process();
+            process.StartInfo.UseShellExecute = true;
+            process.StartInfo.Verb = "runas";
+            process.StartInfo.FileName = "cmd";
+            process.StartInfo.Arguments = $"/k \"{GamePath}\" & exit";
+            process.Start();
+        }
+        else
+        {
+            Process.Start(GamePath);
+        }
+    }
+    
+    public void OnClickUninstall()
+    {
+        var gameDirectory = Path.GetDirectoryName(GamePath);
+        File.Delete(Path.Join(gameDirectory, "doorstop_config.ini"));
+        File.Delete(Path.Join(gameDirectory, "winhttp.dll"));
+        CheckIfInstalled();
     }
 }
