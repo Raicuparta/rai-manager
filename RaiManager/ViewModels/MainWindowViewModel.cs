@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +9,7 @@ using Avalonia.Media.Imaging;
 using Newtonsoft.Json;
 using RaiManager.Models.GameFinder;
 using RaiManager.Models.Manifest;
+using RaiManager.Models.Settings;
 using ReactiveUI;
 
 namespace RaiManager.ViewModels;
@@ -42,26 +45,8 @@ public class MainWindowViewModel : ViewModelBase
         get => _manifest;
         private set => this.RaiseAndSetIfChanged(ref _manifest, value);
     }
-        
-    private bool _isInstalled;
-    public bool IsInstalled
-    {
-        get => _isInstalled;
-        private set
-        {
-            this.RaiseAndSetIfChanged(ref _isInstalled, value);
-        }
-    }
 
-    private bool _isReadyToInstall;
-    private string? _modId = "";
     private ManualGameFinder? _manualGameFinder;
-
-    public bool IsReadyToInstall
-    {
-        get => _isReadyToInstall;
-        private set => this.RaiseAndSetIfChanged(ref _isReadyToInstall, value);
-    }
 
     public MainWindowViewModel()
     {
@@ -72,25 +57,35 @@ public class MainWindowViewModel : ViewModelBase
     {
         LoadIcon();
             
+        _manualGameFinder = new ManualGameFinder("", false);
+
         await LoadManifest();
         await LoadSettings();
             
         var gameFinders = Manifest.Providers.Select(BaseFinder.Create).ToList();
-        _manualGameFinder = new ManualGameFinder("", false);
         gameFinders.Insert(0, _manualGameFinder);
         GameFinders = gameFinders;
     }
 
     private async Task LoadSettings()
     {
-        // var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
-        // var modDataPath = Path.Join(managerDataPath, _modId);
-        // var settingsDocument = await ReadManifest(Path.Join(modDataPath, "settings.xml"));
-        // var settingsGameExePath = GetXmlProperty(settingsDocument, "/settings/gameExePath");
-        // if (settingsGameExePath != null)
-        // {
-        //     GameExePath = settingsGameExePath;
-        // }
+        var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
+        Debug.WriteLine($"Lets se....");
+        Debug.WriteLine($"Lets se.... {Manifest.Id}");
+        var modDataPath = Path.Join(managerDataPath, Manifest.Id);
+        var settingsDocument = await ReadJson<AppSettings>(Path.Join(modDataPath, "settings.json"));
+
+        if (settingsDocument == null)
+        {
+            Debug.WriteLine($"No settings file found in {Path.Join(modDataPath, "settings.json")}");
+            return;
+        }
+        
+        settingsDocument.Paths.TryGetValue("manual", out var manualPath);
+
+        if (string.IsNullOrEmpty(manualPath)) return;
+        
+        _manualGameFinder.SetGamePath(manualPath);
     }
         
     // private async void WriteSettings()
@@ -152,19 +147,19 @@ public class MainWindowViewModel : ViewModelBase
         return document?.SelectSingleNode(path)?.InnerText;
     }
 
-    private async Task<Manifest?> ReadManifest(string path)
+    private async Task<TObject?> ReadJson<TObject>(string path) where TObject: class
     {
         if (!File.Exists(path))
         {
             return null;
         }
 
-        return await Task.Run(() => JsonConvert.DeserializeObject<Manifest>(File.ReadAllText(path)));
+        return await Task.Run(() => JsonConvert.DeserializeObject<TObject>(File.ReadAllText(path)));
     }
         
     private async Task LoadManifest()
     {
-        var manifest = await ReadManifest(ManifestPath);
+        var manifest = await ReadJson<Manifest>(ManifestPath);
 
         if (manifest == null) throw new FileNotFoundException($"Failed to find manifest in {ManifestPath}");
 
