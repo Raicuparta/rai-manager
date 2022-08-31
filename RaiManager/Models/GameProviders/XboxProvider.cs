@@ -7,7 +7,7 @@ namespace RaiManager.Models.GameProviders;
 
 public class XboxProvider : GameProvider
 {
-    public override string DisplayName => "Xbox / Game Pass";
+    public override string DisplayName => "Xbox";
     public override string Id => "xbox";
 
     private const string RegistryPath = @"Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages";

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
 using Avalonia.Media.Imaging;
-using Newtonsoft.Json;
 using RaiManager.Models.GameProviders;
 using RaiManager.Models.Manifest;
 using RaiManager.Models.Settings;
@@ -62,8 +59,11 @@ public class MainWindowViewModel : ViewModelBase
         _appSettings = await AppSettings.LoadSettings(Manifest, _manualProvider);
 
         var gameProviders = Manifest.Providers.Select(GameProvider.Create).ToList();
+        var manifestProviderNames = string.Join(", ", gameProviders.Select(provider => provider.DisplayName));
         gameProviders.Insert(0, _manualProvider);
         GameProviders = gameProviders;
+
+        StatusText = $"Tried to find {Manifest.GameTitle} on {manifestProviderNames}. If no paths can be found, drag the game exe and drop it on this window.";
     }
 
     public void DropFiles(List<string> files)
