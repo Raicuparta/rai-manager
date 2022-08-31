@@ -11,7 +11,7 @@ public class GogGameFinder: BaseFinder
 
     private readonly string _gogId;
     
-    public GogGameFinder(string gameExe, string gogId) : base(gameExe)
+    public GogGameFinder(string gameExe, string gogId) : base(gameExe, false)
     {
         _gogId = gogId;
     }
