@@ -29,9 +29,11 @@
                                 <StackPanel Margin="4" Spacing="4">
                                     <TextBlock Classes="Headline6" Text="{Binding DisplayName}" />
                                     <TextBlock FontSize="10" TextWrapping="Wrap" Text="{Binding GamePath}" />
-                                    <Button Command="{Binding OnClickInstall}" Content="Install" IsVisible="{Binding IsReadyToInstall}" />
-                                    <Button Command="{Binding OnClickStart}" Content="Start Game" IsVisible="{Binding IsInstalled}" />
-                                    <Button Command="{Binding OnClickUninstall}" Classes="Outline Accent" Content="Uninstall" IsVisible="{Binding IsInstalled}" />
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <Button Command="{Binding OnClickInstall}" Content="Install" IsEnabled="{Binding IsReadyToInstall}" />
+                                        <Button Command="{Binding OnClickStart}" Content="Start Game" IsEnabled="{Binding IsInstalled}" />
+                                        <Button Command="{Binding OnClickUninstall}" Classes="Outline Accent" Content="Uninstall" IsEnabled="{Binding IsInstalled}" />
+                                    </StackPanel>
                                     <!-- <TextBlock FontSize="18" TextWrapping="Wrap" Text="{Binding GamePath}" HorizontalAlignment="Center" VerticalAlignment="Center"/> -->
                                 </StackPanel>
                             </styles:Card>
