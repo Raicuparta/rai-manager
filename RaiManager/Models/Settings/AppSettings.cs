@@ -13,19 +13,17 @@ namespace RaiManager.Models.Settings;
 public class AppSettings
 {
     private const string SettingsFileName = "settings.json";
-    
+
     /// <summary>
     /// Dictionary where keys are the <see cref="GameProvider.Id"/> property of a class that extends
     /// <see cref="GameProvider"/>, and the values are the full paths to the game's exe in that provider.
     /// </summary>
     [JsonProperty("paths")]
-    public Dictionary<string, string> Paths {get; protected set;}
+    public Dictionary<string, string> Paths { get; protected set; } = new();
     
     public static async Task<AppSettings?> LoadSettings(AppManifest appManifest, ManualProvider manualProvider)
     {
         var managerDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RaiManager");
-        Debug.WriteLine($"Lets se....");
-        Debug.WriteLine($"Lets se.... {appManifest.Id}");
         var modDataPath = Path.Join(managerDataPath, appManifest.Id);
         var appSettings = await JsonHelper.Read<AppSettings>(Path.Join(modDataPath, SettingsFileName));
 

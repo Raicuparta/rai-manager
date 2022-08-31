@@ -9,7 +9,6 @@ public class XboxProvider : GameProvider
 {
     public override string DisplayName => "Xbox";
     public override string Id => "xbox";
-    public override string Description => "";
 
     private const string RegistryPath = @"Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages";
     private readonly string _uwpDisplayName;

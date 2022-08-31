@@ -25,10 +25,9 @@
             <ItemsControl Items="{Binding GameProviders}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                            <styles:Card MinWidth="240" VerticalAlignment="Top" Margin="0,4">
+                            <styles:Card MinWidth="240" VerticalAlignment="Top" Margin="0,4" IsVisible="{Binding IsAvailable}">
                                 <StackPanel Margin="4" Spacing="4">
                                     <TextBlock Classes="Headline6" Text="{Binding DisplayName}" />
-                                    <TextBlock FontSize="12" TextWrapping="Wrap" Text="{Binding Description}" />
                                     <TextBlock FontSize="10" TextWrapping="Wrap" Text="{Binding GamePath}" />
                                     <StackPanel Orientation="Horizontal" Spacing="4">
                                         <Button Command="{Binding OnClickInstall}" IsEnabled="{Binding IsReadyToInstall}">
