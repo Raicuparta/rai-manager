@@ -21,13 +21,14 @@
     <ScrollViewer VerticalScrollBarVisibility="Visible" >
         <StackPanel Margin="10,10,20,10" Spacing="10">
             <Image Height="100" Width="100" Source="{Binding Icon}" />
-            <TextBlock FontSize="18" TextWrapping="Wrap" Text="{Binding StatusText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <TextBlock FontSize="16" TextWrapping="Wrap" Text="{Binding StatusText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <ItemsControl Items="{Binding GameProviders}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                             <styles:Card MinWidth="240" VerticalAlignment="Top" Margin="0,4">
                                 <StackPanel Margin="4" Spacing="4">
                                     <TextBlock Classes="Headline6" Text="{Binding DisplayName}" />
+                                    <TextBlock FontSize="12" TextWrapping="Wrap" Text="{Binding Description}" />
                                     <TextBlock FontSize="10" TextWrapping="Wrap" Text="{Binding GamePath}" />
                                     <StackPanel Orientation="Horizontal" Spacing="4">
                                         <Button Command="{Binding OnClickInstall}" IsEnabled="{Binding IsReadyToInstall}">

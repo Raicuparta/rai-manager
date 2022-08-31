@@ -10,6 +10,7 @@ public abstract class GameProvider: ReactiveObject
 {
     public abstract string DisplayName { get; }
     public abstract string Id { get; }
+    public abstract string Description { get; }
 
     private string? _gamePath;
     public string? GamePath
