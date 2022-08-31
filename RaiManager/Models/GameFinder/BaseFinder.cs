@@ -6,9 +6,12 @@ namespace RaiManager.Models.GameFinder;
 
 public abstract class BaseFinder
 {
-    public string? GamePath => FindGamePath();
     public abstract string DisplayName { get; }
     public abstract string Id { get; }
+    
+    public string? GamePath => FindGamePath();
+    public bool IsInstalled { get; private set; }
+    public bool IsReadyToInstall { get; private set; }
 
     protected readonly string GameExe;
 
@@ -23,7 +26,7 @@ public abstract class BaseFinder
         var gameIdentifier = providerManifest.GameIdentifier;
         var providerId = providerManifest.ProviderId;
 
-        return providerId switch
+        BaseFinder gameFinder = providerId switch
         {
             "steam" => new SteamGameFinder(gameExe, gameIdentifier),
             "epic" => new EpicGameFinder(gameExe, gameIdentifier),
@@ -31,6 +34,10 @@ public abstract class BaseFinder
             "xbox" => new UwpGameFinder(gameExe, gameIdentifier),
             _ => throw new ArgumentOutOfRangeException(nameof(providerManifest), providerId, null)
         };
+        
+        gameFinder.CheckIfInstalled();
+        
+        return gameFinder;
     }
 
     public abstract string? FindGamePath();
@@ -44,4 +51,53 @@ public abstract class BaseFinder
         Directory.Exists(Path.Combine(gamePath,
             Path.Combine($"{Path.GetFileNameWithoutExtension(GameExe)}_Data", "Managed"))) && 
         File.Exists(Path.Combine(gamePath, GameExe));
+    
+    public async void OnClickInstall()
+    {
+        var gameDirectory = Path.GetDirectoryName(GamePath);
+
+        if (gameDirectory == null)
+        {
+            throw new DirectoryNotFoundException($"Directory not found for path ${GamePath}");
+        }
+            
+        var bepinexPath = Path.GetFullPath("./Mod/BepInEx");
+        await File.WriteAllTextAsync("./Mod/CopyToGame/doorstop_config.ini", $@"[UnityDoorstop]
+enabled=true
+targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
+
+        CopyFilesRecursively(new DirectoryInfo("./Mod/CopyToGame"), new DirectoryInfo(gameDirectory));
+
+        CheckIfInstalled();
+    }
+    
+    
+    public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target) {
+        foreach (var dir in source.GetDirectories())
+        {
+            CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
+        }
+        foreach (var file in source.GetFiles())
+        {
+            File.Copy(file.FullName, Path.Combine(target.FullName, file.Name), true);
+        }
+    }
+    
+    private void CheckIfInstalled()
+    {
+        if (GamePath == null)
+        {
+            IsInstalled = false;
+            IsReadyToInstall = false;
+
+            return;
+        }
+
+        var gameDirectory = Path.GetDirectoryName(GamePath);
+        var doorstopConfigPath = Path.Join(gameDirectory, "doorstop_config.ini");
+        var winhttpPath = Path.Join(gameDirectory, "winhttp.dll");
+        // TODO: also check if doorstop config path is correct.
+        IsInstalled = File.Exists(winhttpPath) && File.Exists(doorstopConfigPath);
+        IsReadyToInstall = !IsInstalled;
+    }
 }
