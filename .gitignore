@@ -8,3 +8,4 @@ riderModule.iml
 
 ## Publish build
 Publish
+*.DotSettings.user
