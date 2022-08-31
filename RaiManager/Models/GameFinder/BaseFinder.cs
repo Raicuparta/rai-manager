@@ -1,10 +1,11 @@
 ﻿using System.IO;
 
-namespace RaiManager.GameFinder;
+namespace RaiManager.Models.GameFinder;
 
 public abstract class BaseFinder
 {
-    public string GamePath => FindGamePath();
+    public string? GamePath => FindGamePath();
+    public abstract string Name { get; }
 
     protected readonly string GameExe;
 

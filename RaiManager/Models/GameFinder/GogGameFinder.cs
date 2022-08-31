@@ -1,9 +1,11 @@
 ﻿using Microsoft.Win32;
 
-namespace RaiManager.GameFinder;
+namespace RaiManager.Models.GameFinder;
 
 public class GogGameFinder: BaseFinder
 {
+    public override string Name => "GOG";
+    
     private const string RegistryPath = @"SOFTWARE\WOW6432Node\GOG.com\Games";
 
     private readonly string _gogId;
