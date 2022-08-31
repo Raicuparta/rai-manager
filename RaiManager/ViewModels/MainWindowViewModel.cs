@@ -77,7 +77,7 @@ public class MainWindowViewModel : ViewModelBase
             
         var gameFinders = Manifest.Providers.Select(BaseFinder.Create).ToList();
         _manualGameFinder = new ManualGameFinder("", false);
-        gameFinders.Add(_manualGameFinder);
+        gameFinders.Insert(0, _manualGameFinder);
         GameFinders = gameFinders;
     }
 
