@@ -2,10 +2,11 @@
 using System.Diagnostics;
 using System.IO;
 using RaiManager.Models.Manifest;
+using ReactiveUI;
 
 namespace RaiManager.Models.GameFinder;
 
-public abstract class BaseFinder
+public abstract class BaseFinder: ReactiveObject
 {
     public abstract string DisplayName { get; }
     public abstract string Id { get; }
@@ -13,8 +14,19 @@ public abstract class BaseFinder
     private string? _gamePath;
     public string? GamePath => _gamePath ??= FindGamePath();
 
-    public bool IsInstalled { get; private set; }
-    public bool IsReadyToInstall { get; private set; }
+    private bool _isInstalled;
+    public bool IsInstalled
+    {
+        get => _isInstalled;
+        private set => this.RaiseAndSetIfChanged(ref _isInstalled, value);
+    }
+    
+    private bool _isReadyToInstall;
+    public bool IsReadyToInstall
+    {
+        get => _isReadyToInstall;
+        private set => this.RaiseAndSetIfChanged(ref _isReadyToInstall, value);
+    }
 
     private readonly bool _requireAdmin;
 
