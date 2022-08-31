@@ -12,7 +12,15 @@ public abstract class BaseFinder: ReactiveObject
     public abstract string Id { get; }
 
     private string? _gamePath;
-    public string? GamePath => _gamePath ??= FindGamePath();
+    public string? GamePath
+    {
+        get => _gamePath;
+        protected set
+        {
+            this.RaiseAndSetIfChanged(ref _gamePath, value);
+            CheckIfInstalled();
+        }
+    }
 
     private bool _isInstalled;
     public bool IsInstalled
@@ -30,7 +38,12 @@ public abstract class BaseFinder: ReactiveObject
 
     private readonly bool _requireAdmin;
 
-    protected readonly string GameExe;
+    private string? _gameExe;
+    protected string? GameExe
+    {
+        get => _gameExe;
+        set => this.RaiseAndSetIfChanged(ref _gameExe, value);
+    }
 
     protected BaseFinder(string gameExe, bool requireAdmin)
     {
@@ -54,9 +67,12 @@ public abstract class BaseFinder: ReactiveObject
             _ => throw new ArgumentOutOfRangeException(nameof(providerManifest), providerId, null)
         };
         
-        gameFinder.CheckIfInstalled();
-        
         return gameFinder;
+    }
+
+    protected void Initialize()
+    {
+        GamePath = FindGamePath();
     }
 
     public abstract string? FindGamePath();

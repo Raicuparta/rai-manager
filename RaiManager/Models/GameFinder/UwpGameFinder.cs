@@ -16,6 +16,7 @@ public class UwpGameFinder : BaseFinder
     public UwpGameFinder(string gameExe, bool requireAdmin, string uwpDisplayName): base(gameExe, requireAdmin)
     {
         _uwpDisplayName = uwpDisplayName;
+        Initialize();
     }
 
     public override string? FindGamePath()

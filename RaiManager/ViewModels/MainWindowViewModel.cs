@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Xml;
 using Avalonia.Media.Imaging;
@@ -38,24 +35,6 @@ public class MainWindowViewModel : ViewModelBase
         get => _gameFinders;
         set => this.RaiseAndSetIfChanged(ref _gameFinders, value);
     }
-        
-    private string? _gameExePath;
-    public string? GameExePath
-    {
-        get => _gameExePath;
-        set
-        {
-            if (value != null && !File.Exists(value))
-            {
-                this.RaiseAndSetIfChanged(ref _gameExePath, null);
-            }
-            else
-            {
-                this.RaiseAndSetIfChanged(ref _gameExePath, value);
-            }
-            // WriteSettings();
-        }
-    }
 
     private Manifest? _manifest;
     public Manifest? Manifest
@@ -76,6 +55,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private bool _isReadyToInstall;
     private string? _modId = "";
+    private ManualGameFinder? _manualGameFinder;
 
     public bool IsReadyToInstall
     {
@@ -95,8 +75,10 @@ public class MainWindowViewModel : ViewModelBase
         await LoadManifest();
         await LoadSettings();
             
-        // TODO fetch details from manifest.
-        GameFinders = Manifest.Providers.Select(BaseFinder.Create).ToList();
+        var gameFinders = Manifest.Providers.Select(BaseFinder.Create).ToList();
+        _manualGameFinder = new ManualGameFinder("", false);
+        gameFinders.Add(_manualGameFinder);
+        GameFinders = gameFinders;
     }
 
     private async Task LoadSettings()
@@ -142,13 +124,14 @@ public class MainWindowViewModel : ViewModelBase
 
     public void DropFiles(List<string> files)
     {
-        var exeNames = GetPossibleExeNames();
-        
-        GameExePath = files.FirstOrDefault(file => exeNames.Contains(Path.GetFileName(file)));
-        if (GameExePath == null)
+        var firstExe = files.FirstOrDefault(file => Path.GetExtension(file) == ".exe");
+
+        if (firstExe == null)
         {
-            StatusText = $"Wrong file. Drag {string.Join(" or ", exeNames)} and drop it on this window to install {Manifest.ModTitle}";
+            throw new FileNotFoundException("None of the files dropped have the exe extension");
         }
+        
+        _manualGameFinder.SetGamePath(firstExe);
     }
         
     private async void LoadIcon()
