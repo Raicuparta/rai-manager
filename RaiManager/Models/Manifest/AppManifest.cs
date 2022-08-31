@@ -1,10 +1,14 @@
+using System.IO;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace RaiManager.Models.Manifest;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class Manifest
+public class AppManifest
 {
+    private const string ManifestPath = "./Mod/manifest.json";
+    
     [JsonProperty("id")]
     public string Id {get; protected set;}
 
@@ -16,4 +20,13 @@ public class Manifest
 
     [JsonProperty("providers")]
     public ProviderManifest[] Providers {get; protected set;}
+    
+    public static async Task<AppManifest> LoadManifest()
+    {
+        var manifest = await JsonHelper.Read<AppManifest>(ManifestPath);
+
+        if (manifest == null) throw new FileNotFoundException($"Failed to find manifest in {ManifestPath}");
+
+        return manifest;
+    }
 }
