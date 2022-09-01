@@ -26,6 +26,13 @@ public class MainWindowViewModel : ViewModelBase
         get => _statusText;
         set => this.RaiseAndSetIfChanged(ref _statusText, value);
     }
+        
+    private string _supportedProvidersText = "Loading...";
+    public string SupportedProvidersText
+    {
+        get => _supportedProvidersText;
+        set => this.RaiseAndSetIfChanged(ref _supportedProvidersText, value);
+    }
 
     private List<GameProvider> _gameProviders = new();
     public List<GameProvider> GameProviders
@@ -59,11 +66,11 @@ public class MainWindowViewModel : ViewModelBase
         _appSettings = await AppSettings.LoadSettings(Manifest, _manualProvider);
 
         var gameProviders = Manifest.Providers.Select(GameProvider.Create).ToList();
-        var manifestProviderNames = string.Join(", ", gameProviders.Select(provider => provider.DisplayName));
+        SupportedProvidersText = string.Join(", ", gameProviders.Select(provider => provider.DisplayName));
         gameProviders.Insert(0, _manualProvider);
         GameProviders = gameProviders;
 
-        StatusText = $"Tried to find {Manifest.GameTitle} on the supported providers ({manifestProviderNames}). If the game can't be found automatically, drag the game exe and drop it on this window.";
+        StatusText = $"If the game can't be found automatically, drag the game exe and drop it on this window.";
     }
 
     public void DropFiles(List<string> files)

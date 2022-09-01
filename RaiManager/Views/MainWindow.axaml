@@ -4,11 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
-        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300"
+        mc:Ignorable="d" d:DesignWidth="550" d:DesignHeight="500"
         Width="550"
-        Height="450"
-        MinWidth="550"
-        MinHeight="450"
+        Height="500"
+        CanResize="False"
         x:Class="RaiManager.Views.MainWindow"
         Icon="/Assets/icon.ico"
         Title="Rai Manager"
@@ -20,39 +19,25 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Visible" >
         <StackPanel Margin="10,10,20,10" Spacing="10">
-            <StackPanel Orientation="Horizontal" Spacing="10">
-                <Image Height="100" Width="100" Source="{Binding Icon}" />
+            <styles:Card VerticalAlignment="Top" Margin="0,4" Background="#1A1A1A">
+            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                <Image Height="80" Width="80" Source="{Binding Icon}" />
                 <StackPanel Spacing="4">
                     <TextBlock Classes="Headline6" Text="{Binding Path=Manifest.ModTitle, StringFormat='\{0\} Installer'}" />
-                    <TextBlock Text="{Binding Path=Manifest.GameTitle, StringFormat='For \{0\}'}" />
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Supported providers: " />
-                        <ItemsControl Items="{Binding Manifest.Providers}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" Spacing="2" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding ProviderId}"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                    <DockPanel>
-                        <TextBlock TextWrapping="Wrap" Text="{Binding StatusText}" />
-                    </DockPanel>
+                    <TextBlock Text="{Binding Path=Manifest.GameTitle, StringFormat='For \{0\}'}" Margin="0,0,0,10" />
+                    <TextBlock Text="{Binding SupportedProvidersText, StringFormat='Auto-detectable providers: \{0\}'}" Foreground="#6E6E6E" />
                 </StackPanel>
             </StackPanel>
+            </styles:Card>
+            <TextBlock TextWrapping="Wrap" Text="{Binding StatusText}" TextAlignment="Center" />
             <ItemsControl Items="{Binding GameProviders}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                             <styles:Card VerticalAlignment="Top" Margin="0,4" IsVisible="{Binding IsAvailable}">
                                 <StackPanel Margin="4" Spacing="4">
-                                    <TextBlock Classes="Headline6" Text="{Binding DisplayName}" />
-                                    <TextBlock FontSize="10" TextWrapping="Wrap" Text="{Binding GamePath}" />
-                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Classes="Headline6" Text="{Binding DisplayName}" TextAlignment="Center" />
+                                    <TextBlock FontSize="10" TextWrapping="Wrap" Text="{Binding GamePath}" TextAlignment="Center" />
+                                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
                                         <Button Command="{Binding OnClickInstall}" IsEnabled="{Binding IsReadyToInstall}">
                                             <StackPanel Orientation="Horizontal" Spacing="4">
                                                 <TextBlock>
