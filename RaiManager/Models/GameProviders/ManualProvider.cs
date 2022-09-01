@@ -18,10 +18,15 @@ public class ManualProvider: GameProvider
         return null;
     }
 
-    public void SetGamePath(string gamePath)
+    public bool SetGamePath(string gamePath)
     {
-        Debug.WriteLine(gamePath);
         GameExe = Path.GetFileName(gamePath);
+        var gameFolder = Path.GetDirectoryName(gamePath);
+
+        if (gameFolder == null || !IsValidGamePath(gameFolder)) return false;
+
         GamePath = gamePath;
+
+        return true;
     }
 }

@@ -83,10 +83,11 @@ public class MainWindowViewModel : ViewModelBase
         {
             throw new FileNotFoundException("None of the files dropped have the exe extension");
         }
-        
-        _manualProvider.SetGamePath(firstExePath);
-        
-        AppSettings.WriteSettings(_appSettings, firstExePath, Manifest);
+
+        if (_manualProvider.SetGamePath(firstExePath))
+        {
+            AppSettings.WriteSettings(_appSettings, firstExePath, Manifest);
+        }
     }
         
     private async void LoadIcon()
