@@ -20,8 +20,31 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Visible" >
         <StackPanel Margin="10,10,20,10" Spacing="10">
-            <Image Height="100" Width="100" Source="{Binding Icon}" />
-            <TextBlock FontSize="16" TextWrapping="Wrap" Text="{Binding StatusText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <Image Height="100" Width="100" Source="{Binding Icon}" />
+                <StackPanel Spacing="4">
+                    <TextBlock Classes="Headline6" Text="{Binding Path=Manifest.ModTitle, StringFormat='\{0\} Installer'}" />
+                    <TextBlock Text="{Binding Path=Manifest.GameTitle, StringFormat='For \{0\}'}" />
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Supported providers: " />
+                        <ItemsControl Items="{Binding Manifest.Providers}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="2" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding ProviderId}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                    <DockPanel>
+                        <TextBlock TextWrapping="Wrap" Text="{Binding StatusText}" />
+                    </DockPanel>
+                </StackPanel>
+            </StackPanel>
             <ItemsControl Items="{Binding GameProviders}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
