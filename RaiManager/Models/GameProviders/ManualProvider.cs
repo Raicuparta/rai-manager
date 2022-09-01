@@ -5,7 +5,7 @@ namespace RaiManager.Models.GameProviders;
 
 public class ManualProvider: GameProvider
 {
-    public override string DisplayName => "Manual";
+    public override string DisplayName => "Manually-provided game path";
     public override string Id => "manual";
 
     public ManualProvider(string gameExe, bool requireAdmin) : base(gameExe, requireAdmin)

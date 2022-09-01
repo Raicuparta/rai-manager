@@ -70,7 +70,16 @@ public class MainWindowViewModel : ViewModelBase
         gameProviders.Insert(0, _manualProvider);
         GameProviders = gameProviders;
 
-        StatusText = $"If the game can't be found automatically, drag the game exe and drop it on this window.";
+        UpdateStatusText();
+    }
+
+    private void UpdateStatusText()
+    {
+        var hasAvailableProvider = GameProviders.Any(provider => provider.IsAvailable);
+
+        StatusText = hasAvailableProvider
+            ? "If the game can't be found automatically, drag the game exe and drop it on this window."
+            : $"Failed to find the game automatically. Drag the game exe and drop it on this window to install {Manifest.ModTitle}";
     }
 
     public void DropFiles(List<string> files)
@@ -88,6 +97,8 @@ public class MainWindowViewModel : ViewModelBase
         {
             AppSettings.WriteSettings(_appSettings, firstExePath, Manifest);
         }
+
+        UpdateStatusText();
     }
         
     private async void LoadIcon()
