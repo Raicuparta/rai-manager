@@ -106,7 +106,8 @@ public abstract class GameProvider: ReactiveObject
         var bepinexPath = Path.GetFullPath("./Mod/BepInEx");
         await File.WriteAllTextAsync("./Mod/CopyToGame/doorstop_config.ini", $@"[UnityDoorstop]
 enabled=true
-targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll");
+targetAssembly={bepinexPath}\core\BepInEx.Preloader.dll
+ignoreDisableSwitch=true");
 
         CopyFilesRecursively(new DirectoryInfo("./Mod/CopyToGame"), new DirectoryInfo(gameDirectory));
 
