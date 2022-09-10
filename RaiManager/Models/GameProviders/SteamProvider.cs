@@ -1,8 +1,10 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Gameloop.Vdf;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 
 namespace RaiManager.Models.GameProviders;
 
@@ -34,6 +36,8 @@ public class SteamProvider : GameProvider
             Debug.WriteLine("Steam not found in Registry.");
             return null;
         }
+        
+        AddAppManifest(Path.Join(steamPath, "config/appconfig.json"));
 
         var defaultLocation = $"{steamPath}/{CommonPath}/{_steamGameFolder}";
         if (IsValidGamePath(defaultLocation))
@@ -77,5 +81,34 @@ public class SteamProvider : GameProvider
 
         Debug.WriteLine($"Game not found in Steam. gameExe: {GameExe}. _steamGameFolder: {_steamGameFolder}");
         return null;
+    }
+
+    private static void AddAppManifest(string appConfigPath)
+    {
+        try
+        {
+            var manifestPath = Path.GetFullPath("./Mod/app.vrmanifest");
+            if (!File.Exists(manifestPath))
+            {
+                Debug.WriteLine($"VR Manifest not found in ({manifestPath})");
+                return;
+            }
+
+            var json = File.ReadAllText(appConfigPath);
+            var appConfig = JsonConvert.DeserializeObject<SteamAppConfig>(json);
+
+            if (appConfig == null)
+            {
+                Debug.WriteLine($"Failed to read appconfig in {appConfigPath}");
+                return;
+            }
+            appConfig.ManifestPaths.Add(manifestPath);
+            
+            File.WriteAllTextAsync(appConfigPath, JsonConvert.SerializeObject(appConfig, Formatting.Indented));
+        }
+        catch (Exception exception)
+        {
+            Debug.WriteLine($"Failed to write app manifest: {exception}");
+        }
     }
 }
