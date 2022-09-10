@@ -11,6 +11,13 @@
         <PublishReadyToRun>false</PublishReadyToRun>
         <Version>1.5.0</Version>
         <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <OutputPath>$(SolutionDir)/RaiManagerBuilds/Release</OutputPath>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <OutputPath>$(SolutionDir)/RaiManagerBuilds/Debug</OutputPath>
     </PropertyGroup>
     <ItemGroup>
         <Folder Include="Models\" />
