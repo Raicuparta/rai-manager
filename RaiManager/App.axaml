@@ -8,7 +8,7 @@
     </Application.DataTemplates>
 
     <Application.Resources>
-        <themes:BundledTheme BaseTheme="Dark" PrimaryColor="DeepPurple" SecondaryColor="DeepOrange"/>
+        <themes:BundledTheme BaseTheme="Dark" PrimaryColor="DeepPurple" SecondaryColor="Amber"/>
     </Application.Resources>
     <Application.Styles>
         <StyleInclude Source="avares://Material.Avalonia/Material.Avalonia.Templates.xaml" />

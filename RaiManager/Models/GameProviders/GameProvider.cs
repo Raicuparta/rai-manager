@@ -176,4 +176,14 @@ ignoreDisableSwitch=true");
         File.Delete(Path.Join(gameDirectory, "winhttp.dll"));
         CheckIfInstalled();
     }
+
+    public void OnClickOpenFolder()
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = Path.GetDirectoryName(GamePath),
+            UseShellExecute = true,
+            Verb = "open"
+        });
+    }
 }

@@ -10,7 +10,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-            
+
         AddHandler(DragDrop.DropEvent, Drop);
     }
 
@@ -22,6 +22,6 @@ public partial class MainWindow : Window
 
         if (fileNames == null) return;
 
-        ((MainWindowViewModel) DataContext).DropFiles(fileNames.ToList());
+        ((MainWindowViewModel)DataContext).DropFiles(fileNames.ToList());
     }
 }

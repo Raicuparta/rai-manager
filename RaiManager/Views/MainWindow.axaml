@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
+        xmlns:sg="clr-namespace:AvaloniaSpacedGrid;assembly=AvaloniaSpacedGrid"
         mc:Ignorable="d" d:DesignWidth="550" d:DesignHeight="500"
         Width="550"
         Height="500"
@@ -14,44 +15,60 @@
         DragDrop.AllowDrop="True">
 
     <Design.DataContext>
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <ScrollViewer VerticalScrollBarVisibility="Visible" >
+    <ScrollViewer VerticalScrollBarVisibility="Visible">
         <StackPanel Margin="10,10,20,10" Spacing="10">
-            <styles:Card VerticalAlignment="Top" Margin="0,4" Background="#1A1A1A">
-            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
-                <Image Height="80" Width="80" Source="{Binding Icon}" />
-                <StackPanel Spacing="4">
-                    <TextBlock Classes="Headline6" Text="{Binding Path=Manifest.ModTitle, StringFormat='\{0\} Installer'}" />
-                    <TextBlock Text="{Binding Path=Manifest.GameTitle, StringFormat='For \{0\}'}" Margin="0,0,0,10" />
-                    <TextBlock Text="{Binding SupportedProvidersText, StringFormat='Auto-detectable providers: \{0\}'}" Foreground="#6E6E6E" />
+            <styles:Card VerticalAlignment="Top" Margin="0,10" Background="#1A1A1A">
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                    <Image Height="80" Width="80" Source="{Binding Icon}" />
+                    <StackPanel Spacing="10">
+                        <TextBlock Classes="Headline6"
+                                   Text="{Binding Path=Manifest.ModTitle, StringFormat='\{0\} Installer'}" />
+                        <TextBlock Text="{Binding Path=Manifest.GameTitle, StringFormat='For \{0\}'}" Margin="0,0,0,10" />
+                        <TextBlock
+                            Text="{Binding SupportedProvidersText, StringFormat='Auto-detectable providers: \{0\}'}"
+                            Foreground="#6E6E6E" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
             </styles:Card>
             <TextBlock TextWrapping="Wrap" Text="{Binding StatusText}" TextAlignment="Center" />
             <ItemsControl Items="{Binding GameProviders}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                            <styles:Card VerticalAlignment="Top" Margin="0,4" IsVisible="{Binding IsAvailable}">
-                                <StackPanel Margin="4" Spacing="4">
-                                    <TextBlock Classes="Headline6" Text="{Binding DisplayName}" TextAlignment="Center" />
-                                    <TextBlock FontSize="10" TextWrapping="Wrap" Text="{Binding GamePath}" TextAlignment="Center" />
-                                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
-                                        <Button Command="{Binding OnClickInstall}" IsEnabled="{Binding IsReadyToInstall}">
-                                            <StackPanel Orientation="Horizontal" Spacing="4">
-                                                <TextBlock>
-                                                    Install
-                                                </TextBlock>
-                                                <TextBlock Text="{Binding $parent[Window].DataContext.Manifest.ModTitle}" />
-                                            </StackPanel>
-                                        </Button>
-                                        <Button Command="{Binding OnClickStart}" Content="Start Game" IsEnabled="{Binding IsInstalled}" />
-                                        <Button Command="{Binding OnClickUninstall}" Classes="Outline Accent" Content="Uninstall" IsEnabled="{Binding IsInstalled}" />
-                                    </StackPanel>
-                                    <!-- <TextBlock FontSize="18" TextWrapping="Wrap" Text="{Binding GamePath}" HorizontalAlignment="Center" VerticalAlignment="Center"/> -->
-                                </StackPanel>
-                            </styles:Card>
+                        <styles:Card VerticalAlignment="Top" Margin="0,10" IsVisible="{Binding IsAvailable}">
+                            <StackPanel Spacing="10">
+                                <TextBlock Classes="Headline6" Text="{Binding DisplayName}" TextAlignment="Center" />
+                                <TextBlock FontSize="10" TextWrapping="Wrap" Text="{Binding GamePath}"
+                                           TextAlignment="Center" />
+                                <sg:SpacedGrid RowDefinitions="*,*" ColumnDefinitions="*,*" ColumnSpacing="10" RowSpacing="10">
+                                    <Button Grid.Row="0" Grid.Column="0" Command="{Binding OnClickInstall}"
+                                            IsEnabled="{Binding IsReadyToInstall}">
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock>
+                                                Install
+                                            </TextBlock>
+                                            <TextBlock Text="{Binding $parent[Window].DataContext.Manifest.ModTitle}" />
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Grid.Row="0" Grid.Column="1" Command="{Binding OnClickUninstall}"
+                                            Classes="Outline Accent" IsEnabled="{Binding IsInstalled}">
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <TextBlock>
+                                                Uninstall
+                                            </TextBlock>
+                                            <TextBlock Text="{Binding $parent[Window].DataContext.Manifest.ModTitle}" />
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Grid.Row="1" Grid.Column="0" Command="{Binding OnClickStart}"
+                                            Content="Start Game" IsEnabled="{Binding IsInstalled}" />
+                                    <Button Grid.Row="1" Grid.Column="1" Command="{Binding OnClickOpenFolder}">
+                                        Open Game Folder
+                                    </Button>
+                                </sg:SpacedGrid>
+                            </StackPanel>
+                        </styles:Card>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
