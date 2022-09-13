@@ -7,7 +7,7 @@
         xmlns:sg="clr-namespace:AvaloniaSpacedGrid;assembly=AvaloniaSpacedGrid"
         mc:Ignorable="d" d:DesignWidth="550" d:DesignHeight="500"
         Width="550"
-        Height="500"
+        Height="400"
         CanResize="False"
         x:Class="RaiManager.Views.MainWindow"
         Icon="/Assets/icon.ico"
