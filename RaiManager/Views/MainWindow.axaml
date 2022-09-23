@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
         xmlns:sg="clr-namespace:AvaloniaSpacedGrid;assembly=AvaloniaSpacedGrid"
-        xmlns:viewModels="clr-namespace:RaiManager.ViewModels"
         mc:Ignorable="d" d:DesignWidth="550" d:DesignHeight="500"
         Width="550"
         Height="400"
@@ -36,7 +35,7 @@
                                 </TextBlock>
                             </Button>
                             <Button Classes="Flat" Height="26" Width="26" Padding="0" Margin="10,0,0,0" Command="{Binding ClickShowDebugLogs}">
-                                <ToolTip.Tip>Open debug logs file (if it exists)</ToolTip.Tip>
+                                <ToolTip.Tip>Open debug log file (if it exists)</ToolTip.Tip>
                                 <TextBlock HorizontalAlignment="Center" FontSize="18" Padding="0" Margin="1,-3,0,0"
                                            FontWeight="Bold">
                                     🗒️
@@ -59,6 +58,9 @@
                                 <TextBlock Classes="Headline6" Text="{Binding DisplayName}" TextAlignment="Center" />
                                 <TextBlock FontSize="10" TextWrapping="Wrap" Text="{Binding GamePath}"
                                            TextAlignment="Center" />
+                                <TextBox IsVisible="{Binding !!ErrorText}" Classes="Solo" IsReadOnly="True"
+                                         TextWrapping="Wrap" Text="{Binding ErrorText}" AcceptsReturn="True"
+                                         FontWeight="Thin" Margin="0" Foreground="Orange" />
                                 <sg:SpacedGrid RowDefinitions="*,*" ColumnDefinitions="*,*" ColumnSpacing="10" RowSpacing="10">
                                     <Button Grid.Row="0" Grid.Column="0" Command="{Binding OnClickInstall}"
                                             IsEnabled="{Binding IsReadyToInstall}">

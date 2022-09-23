@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -73,7 +74,16 @@ public class MainWindowViewModel : ViewModelBase
             
         _manualProvider = new ManualProvider("", false);
 
-        Manifest = await AppManifest.LoadManifest();
+        try
+        {
+            Manifest = await AppManifest.LoadManifest();
+        }
+        catch (Exception exception)
+        {
+            StatusText = $"Failed to read mod manifest. This might mean the files are corrupted, try re-downloading and re-installing.\n\n{exception}";
+            return;
+        }
+
         _appSettings = await AppSettings.LoadSettings(Manifest, _manualProvider);
 
         var gameProviders = Manifest.Providers.Select(GameProvider.Create).ToList();
@@ -122,6 +132,10 @@ public class MainWindowViewModel : ViewModelBase
     
     public static void OnClickOpenModFolder()
     {
+        var modFolderPath = Path.GetDirectoryName("./Mod/");
+
+        if (!Directory.Exists(modFolderPath)) return;
+        
         Process.Start(new ProcessStartInfo
         {
             FileName = Path.GetDirectoryName("./Mod/"),

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -21,11 +22,13 @@ public class AppManifest
     [JsonProperty("providers")]
     public ProviderManifest[] Providers {get; protected set;}
     
-    public static async Task<AppManifest> LoadManifest()
+    public static async Task<AppManifest?> LoadManifest()
     {
+        if (!File.Exists(ManifestPath)) throw new FileNotFoundException($"Failed to find manifest in {ManifestPath}");
+        
         var manifest = await JsonHelper.Read<AppManifest>(ManifestPath);
 
-        if (manifest == null) throw new FileNotFoundException($"Failed to find manifest in {ManifestPath}");
+        if (manifest == null) throw new FileNotFoundException($"Failed to read manifest in {ManifestPath}");
 
         return manifest;
     }

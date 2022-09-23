@@ -51,6 +51,13 @@ public abstract class GameProvider: ReactiveObject
         get => _gameExe;
         protected set => this.RaiseAndSetIfChanged(ref _gameExe, value);
     }
+    
+    private string? _errorText;
+    public string? ErrorText
+    {
+        get => _errorText;
+        private set => this.RaiseAndSetIfChanged(ref _errorText, value);
+    }
 
     protected GameProvider(string gameExe, bool requireAdmin)
     {
@@ -96,21 +103,28 @@ public abstract class GameProvider: ReactiveObject
     
     public async void OnClickInstall()
     {
-        var gameDirectory = Path.GetDirectoryName(GamePath);
-
-        if (gameDirectory == null)
+        try
         {
-            throw new DirectoryNotFoundException($"Directory not found for path ${GamePath}");
-        }
-            
-        await File.WriteAllTextAsync("./Mod/CopyToGame/doorstop_config.ini", $@"[UnityDoorstop]
+            var gameDirectory = Path.GetDirectoryName(GamePath);
+
+            if (gameDirectory == null)
+            {
+                throw new DirectoryNotFoundException($"Directory not found for path ${GamePath}");
+            }
+
+            await File.WriteAllTextAsync("./Mod/CopyToGame/doorstop_config.ini", $@"[UnityDoorstop]
 enabled=true
 {GetDoorstopIniTargetAssemblyConfig()}
 ignoreDisableSwitch=true");
 
-        CopyFilesRecursively(new DirectoryInfo("./Mod/CopyToGame"), new DirectoryInfo(gameDirectory));
+            CopyFilesRecursively(new DirectoryInfo("./Mod/CopyToGame"), new DirectoryInfo(gameDirectory));
 
-        CheckIfInstalled();
+            CheckIfInstalled();
+        }
+        catch (Exception exception)
+        {
+            ErrorText = $"Error installing mod: {exception}";
+        }
     }
 
     private static string GetDoorstopIniTargetAssemblyConfig()
