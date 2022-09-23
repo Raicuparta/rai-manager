@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:styles="clr-namespace:Material.Styles;assembly=Material.Styles"
         xmlns:sg="clr-namespace:AvaloniaSpacedGrid;assembly=AvaloniaSpacedGrid"
+        xmlns:viewModels="clr-namespace:RaiManager.ViewModels"
         mc:Ignorable="d" d:DesignWidth="550" d:DesignHeight="500"
         Width="550"
         Height="400"
@@ -24,8 +25,17 @@
                 <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
                     <Image Height="80" Width="80" Source="{Binding Icon}" />
                     <StackPanel Spacing="10">
-                        <TextBlock Classes="Headline6"
-                                   Text="{Binding Path=Manifest.ModTitle, StringFormat='\{0\} Installer'}" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Classes="Headline6"
+                                       Text="{Binding Path=Manifest.ModTitle, StringFormat='\{0\} Installer'}" />
+                            <Button Classes="Flat" Height="26" Width="26" Padding="0" Margin="10,0,0,0" Command="{Binding OnClickOpenModFolder}">
+                                <ToolTip.Tip>Open mod folder</ToolTip.Tip>
+                                <TextBlock HorizontalAlignment="Center" FontSize="18" Padding="0" Margin="1,-3,0,0"
+                                           FontWeight="Bold">
+                                    📂
+                                </TextBlock>
+                            </Button>
+                        </StackPanel>
                         <TextBlock Text="{Binding Path=Manifest.GameTitle, StringFormat='For \{0\}'}" Margin="0,0,0,10" />
                         <TextBlock
                             Text="{Binding SupportedProvidersText, StringFormat='Auto-detectable providers: \{0\}'}"

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -107,5 +108,15 @@ public class MainWindowViewModel : ViewModelBase
         {
             Icon = await Task.Run(() => Bitmap.DecodeToWidth(File.OpenRead(IconPath), 400));
         }
+    }
+    
+    public static void OnClickOpenModFolder()
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = Path.GetDirectoryName("./Mod/"),
+            UseShellExecute = true,
+            Verb = "open"
+        });
     }
 }
