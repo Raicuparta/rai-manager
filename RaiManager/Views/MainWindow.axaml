@@ -12,7 +12,7 @@
         CanResize="False"
         x:Class="RaiManager.Views.MainWindow"
         Icon="/Assets/icon.ico"
-        Title="Rai Manager"
+        Title="{Binding WindowTitle}"
         DragDrop.AllowDrop="True">
 
     <Design.DataContext>

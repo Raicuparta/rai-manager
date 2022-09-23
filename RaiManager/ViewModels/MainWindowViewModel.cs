@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using RaiManager.Models.GameProviders;
@@ -13,6 +14,13 @@ namespace RaiManager.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
+    private string _windowTitle = $"Rai Manager";
+    public string WindowTitle
+    {
+        get => _windowTitle;
+        private set => this.RaiseAndSetIfChanged(ref _windowTitle, value);
+    }
+    
     private const string IconPath = "./Mod/icon.png";
     private Bitmap? _icon;
     public Bitmap? Icon
@@ -59,6 +67,8 @@ public class MainWindowViewModel : ViewModelBase
 
     private async void SetUp()
     {
+        SetUpWindowTitle();
+        
         LoadIcon();
             
         _manualProvider = new ManualProvider("", false);
@@ -80,10 +90,10 @@ public class MainWindowViewModel : ViewModelBase
 
         StatusText = hasAvailableProvider
             ? "If the game can't be found automatically, drag the game exe and drop it on this window."
-            : $"Failed to find the game automatically. Drag the game exe and drop it on this window to install {Manifest.ModTitle}";
+            : $"Failed to find the game automatically. Drag the game exe and drop it on this window to install {Manifest?.ModTitle ?? "the mod"}";
     }
 
-    public void DropFiles(List<string> files)
+    public void DropFiles(IEnumerable<string> files)
     {
         if (_manualProvider == null || Manifest == null) return;
         
@@ -132,5 +142,10 @@ public class MainWindowViewModel : ViewModelBase
             UseShellExecute = true,
             Verb = "open"
         });
+    }
+
+    private void SetUpWindowTitle()
+    {
+        WindowTitle = $"Rai Manager {Assembly.GetExecutingAssembly().GetName().Version}";
     }
 }
