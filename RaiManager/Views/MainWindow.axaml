@@ -35,6 +35,13 @@
                                     📂
                                 </TextBlock>
                             </Button>
+                            <Button Classes="Flat" Height="26" Width="26" Padding="0" Margin="10,0,0,0" Command="{Binding ClickShowDebugLogs}">
+                                <ToolTip.Tip>Open debug logs file</ToolTip.Tip>
+                                <TextBlock HorizontalAlignment="Center" FontSize="18" Padding="0" Margin="1,-3,0,0"
+                                           FontWeight="Bold">
+                                    🗒️
+                                </TextBlock>
+                            </Button>
                         </StackPanel>
                         <TextBlock Text="{Binding Path=Manifest.GameTitle, StringFormat='For \{0\}'}" Margin="0,0,0,10" />
                         <TextBlock

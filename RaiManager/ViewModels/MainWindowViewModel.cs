@@ -119,4 +119,18 @@ public class MainWindowViewModel : ViewModelBase
             Verb = "open"
         });
     }
+    
+    public static void ClickShowDebugLogs()
+    {
+        var logsFilePath = Path.GetFullPath("./Mod/BepInEx/LogOutput.log");
+
+        if (!File.Exists(logsFilePath)) return;
+        
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = logsFilePath,
+            UseShellExecute = true,
+            Verb = "open"
+        });
+    }
 }
