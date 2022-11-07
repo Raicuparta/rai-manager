@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "description": "Schema for the manifest that Rai Manager uses for getting info about the games and mods.",
+  "required": [
+    "modTitle",
+    "gameTitle",
+    "providers"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "The JSON schema for this manifest"
+    },
+    "modTitle": {
+      "type": "string",
+      "description": "Title for this mod, used for display only"
+    },
+    "gameTitle": {
+      "type": "string",
+      "description": "Title of the original game, used for display only"
+    },
+    "providers": {
+      "type": "array",
+      "additionalProperties": false,
+      "items": {
+        "type": "object",
+        "required": [
+          "providerId",
+          "gameIdentifier",
+          "gameExe"
+        ],
+        "properties": {
+          "providerId": {
+            "type": "string",
+            "enum": [
+              "steam",
+              "gog",
+              "xbox",
+              "epic"
+            ],
+            "description": "The store / provider identifier. Note that 'xbox' is for any games installed via Windows Store / PC Xbox / Game Pass."
+          },
+          "gameIdentifier": {
+            "type": "string",
+            "description": "This varies depending on the provider.\nSteam: game folder (if your game is in C:/Programs/Steam/steamapps/common/Firewatch, then gameIdentifier is just 'Firewatch').\nGOG: go to gogdb.org to find the ID number (Firewatch is gogdb.org/product/1459256379, so the ID is 1459256379).\nXbox: in your registry go to HKEY_CURRENT_USER/Software/Classes/Local Settings/Software/Microsoft/Windows/CurrentVersion/AppModel/Repository/Packages, find your game in the list, and get the value of 'DisplayName' (for Firewatch this was under 'CampoSanto.Firewatch_[...]', and the value of DisplayName was 'Firewatch').\nEpic: Go to epicdatainfo.vercel.app/items and find your game (make sure it's the right version). Click that row, and under 'root' you'll find an 'id' (which is also in the url now). (For Outer Wilds this is '601d0668cef146bd8eef75d43c6bbb0b')."
+          },
+          "gameExe": {
+            "type": "string",
+            "description": "The full name of the of the game executable, including the extension. For Firewatch this is Firewatch.exe"
+          },
+          "requireAdmin": {
+            "type": "boolean",
+            "description": "Set to true if admin rights are needed to install this mod. This might be needed if you need to modify game files, but the folder is protected (which is usually the case for Xbox PC games)."
+          }
+        }
+      }
+    }
+  }
+}
