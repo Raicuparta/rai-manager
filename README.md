@@ -25,3 +25,21 @@ There are two run configurations:
 ![image](https://user-images.githubusercontent.com/3955124/200339452-317d1378-1bb4-437d-9a6a-12c8cdffde6a.png)
 
 During development, you wanna keep it in the "RaiManager" run configuration, so you can test the manager by running via the IDE. Once you wanna publish it, you need to swap to the "Publish RaiManager" run configuration, and run the project. This will create a neat little publish build without all the dangling dlls and stuff.
+
+## License
+
+Rai Manager: VR Mod Manager
+Copyright (C) 2022  Raicuparta
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
