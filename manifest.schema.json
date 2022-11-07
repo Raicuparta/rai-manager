@@ -24,6 +24,7 @@
     "providers": {
       "type": "array",
       "additionalProperties": false,
+      "description": "List of objects with info about the game on each available provider / store",
       "items": {
         "type": "object",
         "required": [

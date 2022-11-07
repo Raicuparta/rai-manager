@@ -1,0 +1,31 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Raicuparta/rai-manager/master/manifest.schema.json",
+  "modTitle": "Two Forks VR",
+  "gameTitle": "Firewatch",
+  "providers": [
+    {
+      "providerId": "steam",
+      "gameIdentifier": "Firewatch",
+      "requireAdmin": false,
+      "gameExe": "Firewatch.exe"
+    },
+    {
+      "providerId": "gog",
+      "gameIdentifier": "1459256379",
+      "requireAdmin": false,
+      "gameExe": "Firewatch.exe"
+    },
+    {
+      "providerId": "xbox",
+      "gameIdentifier": "Firewatch",
+      "requireAdmin": true,
+      "gameExe": "Firewatch.exe"
+    },
+    {
+      "providerId": "epic",
+      "gameIdentifier": "601d0668cef146bd8eef75d43c6bbb0b",
+      "requireAdmin": true,
+      "gameExe": "OuterWilds.exe"
+    }
+  ]
+}
