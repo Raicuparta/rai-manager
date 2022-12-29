@@ -13,12 +13,13 @@
         <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <TargetRuntime>win-x64</TargetRuntime>
+        <PublishRelease>true</PublishRelease>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <OutputPath>$(SolutionDir)/RaiManagerBuilds/Release</OutputPath>
+        <OutputPath>$(MSBuildProjectDirectory)/../RaiManagerBuilds/Release</OutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <OutputPath>$(SolutionDir)/RaiManagerBuilds/Debug</OutputPath>
+        <OutputPath>$(MSBuildProjectDirectory)/../RaiManagerBuilds/Debug</OutputPath>
     </PropertyGroup>
     <ItemGroup>
         <Folder Include="Models\" />
