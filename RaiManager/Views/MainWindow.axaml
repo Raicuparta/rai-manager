@@ -103,6 +103,10 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+
+            <!-- Feel free to remove this if you really want to,
+            but I appreciate having some kind of credit if you use Rai Manager for your mods 😘 -->
+            <TextBlock Foreground="#6E6E6E" FontSize="12" >Rai Manager by Raicuparta</TextBlock>
         </StackPanel>
     </ScrollViewer>
 </Window>
