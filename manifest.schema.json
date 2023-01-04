@@ -21,6 +21,10 @@
       "type": "string",
       "description": "Title of the original game, used for display only"
     },
+    "modAuthor": {
+      "type": "string",
+      "description": "Name of the mod's creator"
+    },
     "providers": {
       "type": "array",
       "additionalProperties": false,

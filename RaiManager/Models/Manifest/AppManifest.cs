@@ -18,6 +18,9 @@ public class AppManifest
 
     [JsonProperty("gameTitle")]
     public string GameTitle {get; protected set;}
+    
+    [JsonProperty("modAuthor")]
+    public string? ModAuthor {get; protected set;}
 
     [JsonProperty("providers")]
     public ProviderManifest[] Providers {get; protected set;}

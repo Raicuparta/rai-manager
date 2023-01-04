@@ -42,7 +42,19 @@
                                 </TextBlock>
                             </Button>
                         </StackPanel>
-                        <TextBlock Text="{Binding Path=Manifest.GameTitle, StringFormat='For \{0\}'}" Margin="0,0,0,10" />
+                        <TextBlock IsVisible="{Binding !Manifest.ModAuthor.Length}" Margin="0,0,0,10">
+                            <TextBlock.Text>    
+                                <Binding StringFormat="A mod for {0}" Path="Manifest.GameTitle" />
+                            </TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock IsVisible="{Binding !!Manifest.ModAuthor}" Margin="0,0,0,10">
+                            <TextBlock.Text>    
+                                <MultiBinding StringFormat="A mod by {0}, for {1}">
+                                    <Binding Path="Manifest.ModAuthor" />
+                                    <Binding Path="Manifest.GameTitle" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
                         <TextBlock
                             Text="{Binding SupportedProvidersText, StringFormat='Auto-detectable providers: \{0\}'}"
                             Foreground="#6E6E6E" />
