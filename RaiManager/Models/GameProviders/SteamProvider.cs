@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Gameloop.Vdf;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -104,7 +105,10 @@ public class SteamProvider : GameProvider
             }
             appConfig.ManifestPaths.Add(manifestPath);
             
-            File.WriteAllTextAsync(appConfigPath, JsonConvert.SerializeObject(appConfig, Formatting.Indented));
+            File.WriteAllTextAsync(
+                appConfigPath,
+                JsonConvert.SerializeObject(appConfig, Formatting.Indented),
+                Encoding.Unicode);
         }
         catch (Exception exception)
         {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RaiManager.Models.GameProviders;
@@ -53,6 +54,9 @@ public class AppSettings
         
         Directory.CreateDirectory(modDataPath);
         
-        await File.WriteAllTextAsync(settingsPath, JsonConvert.SerializeObject(settingsDocument, Formatting.Indented));
+        await File.WriteAllTextAsync(
+            settingsPath,
+            JsonConvert.SerializeObject(settingsDocument, Formatting.Indented),
+            Encoding.Unicode);
     }
 }

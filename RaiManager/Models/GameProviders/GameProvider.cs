@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using RaiManager.Models.Manifest;
 using ReactiveUI;
 
@@ -115,7 +116,7 @@ public abstract class GameProvider: ReactiveObject
             await File.WriteAllTextAsync("./Mod/CopyToGame/doorstop_config.ini", $@"[UnityDoorstop]
 enabled=true
 {GetDoorstopIniTargetAssemblyConfig()}
-ignoreDisableSwitch=true");
+ignoreDisableSwitch=true", Encoding.Unicode);
 
             CopyFilesRecursively(new DirectoryInfo("./Mod/CopyToGame"), new DirectoryInfo(gameDirectory));
 
