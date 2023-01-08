@@ -12,6 +12,7 @@
         <Version>1.7.0</Version>
         <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
         <TargetRuntime>win-x64</TargetRuntime>
         <PublishRelease>true</PublishRelease>
     </PropertyGroup>
