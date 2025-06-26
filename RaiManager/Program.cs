@@ -23,6 +23,11 @@ class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
+            .With(new Win32PlatformOptions()
+            {
+                // This disables GPU rendering. For some reason the app started dying and doing this fixes it.
+                AllowEglInitialization = false,
+            })
             .LogToTrace()
             .UseReactiveUI();
 }
